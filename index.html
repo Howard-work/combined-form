@@ -26,11 +26,11 @@ hr{border:none;border-top:1px solid #ddd;margin:14px 0}
 @media print{
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
   @page{size:A4 portrait;margin:6mm}
+  @page:blank{display:none}
   #ui,#btnPDF,#msg,hr,.hint{display:none!important}
-  body{background:#fff;margin:0;padding:0}
-  #sheet{display:block!important;width:100%!important;margin:0!important;padding:0!important;page-break-after:avoid}
-  table.form{width:100%!important;font-size:7.8pt;table-layout:fixed;border-collapse:collapse;page-break-inside:avoid}
-  table.form tr{page-break-inside:avoid;page-break-after:avoid}
+  body{background:#fff;margin:0;padding:0;height:297mm;overflow:hidden}
+  #sheet{display:block!important;width:100%!important;margin:0!important;padding:0!important;overflow:hidden;max-height:285mm}
+  table.form{width:100%!important;font-size:7.8pt;table-layout:fixed;border-collapse:collapse}
   table.form td{padding:0 2px;line-height:1.1;overflow:hidden}
   .sz24{font-size:12pt!important}.sz14{font-size:9pt!important}
   .h44{height:39pt!important}.h33{height:27pt!important}
@@ -79,7 +79,7 @@ table.form td{padding:2px 5px;vertical-align:middle;word-break:break-all}
   <button class="btn-pdf" id="btnPDF">🖨 儲存 PDF</button>
   <div id="msg"></div>
   <hr>
-  <div class="hint">iPhone：儲存PDF → 列印 → 兩指撐開縮圖 → 分享 → 儲存到檔案</div>
+  <div class="hint">📱 iPhone Safari：按「儲存PDF」→ 列印預覽 → 兩指撐開縮圖 → 右上角分享 → 儲存到檔案（無網址頁尾）<br>💻 電腦：按「儲存PDF」→ 另存為PDF</div>
 </div>
 
 <div id="sheet">
