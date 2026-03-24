@@ -315,8 +315,8 @@ table.form td{padding:2px 5px;vertical-align:middle;word-break:break-all}
 </div>
 
 <!-- html2canvas + jsPDF 本地檔案 -->
-<script src="html2canvas.min.js"></script>
-<script src="jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous"></script>
 <script>
 const INV=[{"品名":"AN-011(R)黑 57*300 OUT","料號":"RRAN0116010005700300"},{"品名":"AN-011(R)黑 82*300 OUT","料號":"RRAN0116010008200300"},{"品名":"AN-210(R)黑 34*600 OUT","料號":"RRAN2106010003400600"},{"品名":"AN-510+ 黑 110*600 OUT","料號":"RSAN51P6010011000600"},{"品名":"AN-510+ 黑 34*50 OUT","料號":"RSAN51P6010003400050"},{"品名":"AN-510+ 黑 34*600 OUT","料號":"RSAN51P6010003400600"},{"品名":"AN-510+ 黑 55*600 OUT","料號":"RSAN51P6010005500600"},{"品名":"AN-510+ 黑 57*300 OUT","料號":"RSAN51P6010005700300"},{"品名":"AN-510+ 黑 82*300 OUT","料號":"RSAN51P6010008200300"},{"品名":"AR-710黑 82*300 OUT","料號":"RRAR7106010008200300"},{"品名":"AS-900黑 82*50 OUT","料號":"RSAS9006010008200050"},{"品名":"DN-320(R) 黑 34*600 OUT","料號":"RRDN3206010003400600"},{"品名":"DN-320(R) 黑 55*600 OUT","料號":"RRDN3206010005500600"},{"品名":"DN-320(R) 黑 57*300 OUT","料號":"RRDN3206010005700300"},{"品名":"DN-320(R) 黑 82*300 OUT","料號":"RRDN3206010008200300"},{"品名":"DN-320(R) 黑 110MM*280M IN 置中","料號":"RRDN3206M11011000280"},{"品名":"DN-421(R) 黑 55*600 OUT","料號":"RRDN4216010005500600"},{"品名":"DN-421(R) 黑 57*300 OUT","料號":"RRDN4216010005700300"},{"品名":"DN-421(R) 黑 82*300 OUT","料號":"RRDN4216010008200300"},{"品名":"DN-421(R) 黑 110*280 IN 置中","料號":"RRDN4216M11011000280"},{"品名":"DN-480(R) 黑 55*600 OUT","料號":"RRDN4806010005500600"},{"品名":"DN-561 (R) 白 55*600 OUT","料號":"RRDN5617010005500600"},{"品名":"DN-561 (R) 白 57*300 OUT","料號":"RRDN5617010005700300"},{"品名":"DN-561 (R) 黑 55*600 OUT","料號":"RRDN5616010005500600"},{"品名":"DN-561 (R) 黑 57*300 OUT","料號":"RRDN5616010005700300"},{"品名":"DN-561黑 110*280 IN 置中","料號":"RRDN5616M11011000280"},{"品名":"DN-707(R)黑 34*600 OUT","料號":"RRDN7A76010003400600"},{"品名":"DN-707(R)黑 57*300 OUT","料號":"RRDN7A76010005700300"},{"品名":"DN-707(R)黑 82*300 OUT","料號":"RRDN7A76010008200300"},{"品名":"DN-707(R)黑 110*600 OUT","料號":"RRDN7A76010011000600"},{"品名":"DN-808白 34*600 OUT","料號":"RSDN8087010003400600"},{"品名":"DN-808白 82*300 OUT","料號":"RSDN8087010008200300"},{"品名":"DN-808黑 34*600 OUT","料號":"RSDN8086010003400600"},{"品名":"DN-808黑 55*600 OUT","料號":"RSDN8086010005500600"},{"品名":"DN-808黑 82*300 OUT","料號":"RSDN8086010008200300"},{"品名":"EN-890 (R)黑 110*280 IN 置中","料號":"RREN8906M11011000280"},{"品名":"GN-314黑 34*600 OUT","料號":"RSGN3146010003400600"},{"品名":"GN-314黑 55*600 OUT","料號":"RSGN3146010005500600"},{"品名":"GN-331黑 34*600 OUT","料號":"RRGN3316010003400600"},{"品名":"GN-331黑 57*300 OUT","料號":"RRGN3316010005700300"},{"品名":"GN-331(R) 白 55MM*600M OUT","料號":"RRGN3317010005500600"},{"品名":"GN-331(R) 白 82MM*300M OUT","料號":"RRGN3317010008200300"},{"品名":"GN-512黑 34*600 OUT","料號":"RSGN5126010003400600"},{"品名":"GN-512黑 55*600 OUT","料號":"RSGN5126010005500600"},{"品名":"GN-811(R) 黑 110MM*280M IN 置中","料號":"RRGN8116M11011000280"},{"品名":"HL-35白 34*600 OUT","料號":"RRHL3507010003400600"},{"品名":"HL-35白 57*300 OUT","料號":"RRHL3507010005700300"},{"品名":"KN-830(R) 黑 34*600 OUT","料號":"RRKN8306010003400600"},{"品名":"KN-830(R) 黑 55*600 OUT","料號":"RRKN8306010005500600"},{"品名":"KN-830(R) 黑 57*300 OUT","料號":"RRKN8306010005700300"},{"品名":"KN-830(R) 黑 82*300 OUT","料號":"RRKN8306010008200300"},{"品名":"ON-222白 82MM*300M OUT","料號":"RSON2227010008200300"},{"品名":"ZR-810金 36*300 OUT","料號":"RRZR8101010003600300"},{"品名":"ZR-810金 82*300 OUT","料號":"RRZR8101010008200300"}];
 
@@ -440,6 +440,11 @@ document.getElementById('btnGen').addEventListener('click',function(){
 });
 
 document.getElementById('btnPDF').addEventListener('click',async function(){
+  // 確認函式庫已載入
+  if(typeof html2canvas==='undefined'||typeof window.jspdf==='undefined'){
+    showMsg('❌ 函式庫載入失敗，請確認網路連線後重新整理頁面再試','err');
+    return;
+  }
   const btn=this;
   btn.disabled=true;
   btn.textContent='⏳ 產生中，請稍候…';
@@ -449,10 +454,11 @@ document.getElementById('btnPDF').addEventListener('click',async function(){
     // 截圖前強制寬度794px，手機和電腦結果一致
     const origStyle=sheet.getAttribute('style')||'';
     sheet.style.cssText='display:block;width:794px;min-width:794px;max-width:794px;overflow:visible;margin:0;padding:0;background:#fff';
-    await new Promise(r=>setTimeout(r,200));
+    await new Promise(r=>setTimeout(r,300));
     const canvas=await html2canvas(sheet,{
       scale:2,
       useCORS:true,
+      allowTaint:true,
       backgroundColor:'#ffffff',
       logging:false,
       windowWidth:900,
@@ -460,6 +466,24 @@ document.getElementById('btnPDF').addEventListener('click',async function(){
       scrollX:0,
       scrollY:0,
     });
+    sheet.setAttribute('style',origStyle);
+    const {jsPDF}=window.jspdf;
+    const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    const margin=8;
+    const imgW=210-margin*2;
+    const imgH=canvas.height*(imgW/canvas.width);
+    const finalH=Math.min(imgH,297-margin*2);
+    pdf.addImage(canvas.toDataURL('image/jpeg',0.92),'JPEG',margin,margin,imgW,finalH);
+    pdf.save(pdfFilename);
+    showMsg('✅ PDF 已下載：'+pdfFilename,'ok');
+  }catch(e){
+    showMsg('❌ 錯誤：'+e.message,'err');
+    console.error(e);
+  }finally{
+    btn.disabled=false;
+    btn.textContent='⬇ 下載 PDF';
+  }
+});
     sheet.setAttribute('style',origStyle);
     const {jsPDF}=window.jspdf;
     const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
