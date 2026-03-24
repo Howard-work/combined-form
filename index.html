@@ -331,6 +331,9 @@ function showMsg(txt,cls){const el=document.getElementById('msg');el.textContent
 let pdfFilename='組合單.pdf';
 
 document.getElementById('btnGen').addEventListener('click',function(){
+  // 診斷：確認 JS 執行到這裡
+  var libs='jspdf:'+(typeof window.jspdf)+' domtoimage:'+(typeof domtoimage);
+  console.log('btnGen clicked, libs='+libs);
   const model=document.getElementById('model').value.trim();
   if(!model){showMsg('請先選擇機型','err');return;}
   const customer=document.getElementById('customer').value.trim();
@@ -439,29 +442,47 @@ document.getElementById('btnGen').addEventListener('click',function(){
 });
 
 document.getElementById('btnPDF').addEventListener('click',async function(){
-  if(typeof domtoimage==='undefined'||typeof window.jspdf==='undefined'){
-    showMsg('❌ 函式庫未載入，請重新整理頁面','err');
+  var libStatus='jspdf:'+(typeof window.jspdf)+' | domtoimage:'+(typeof domtoimage);
+  showMsg('函式庫狀態：'+libStatus,'ing');
+  if(typeof window.jspdf==='undefined'){
+    showMsg('❌ jsPDF 未載入 — 請截圖回報','err');
+    return;
+  }
+  if(typeof domtoimage==='undefined'){
+    showMsg('❌ dom-to-image 未載入 — 請截圖回報','err');
     return;
   }
   const btn=this;
   btn.disabled=true;
-  btn.textContent='⏳ 產生中，請稍候…';
-  showMsg('正在產生 PDF（約5-15秒）…','ing');
+  btn.textContent='⏳ 截圖中…';
+  showMsg('步驟1：準備截圖…','ing');
   try{
     const sheet=document.getElementById('sheet');
-
-    // 固定寬度截圖
     const origStyle=sheet.getAttribute('style')||'';
     sheet.style.cssText='display:block;width:794px;min-width:794px;position:absolute;top:0;left:0;z-index:-1;background:#fff;margin:0;padding:0';
     await new Promise(r=>setTimeout(r,400));
-
-    const scale=2;
-    const dataUrl=await domtoimage.toJpeg(sheet,{
-      quality:0.92,
-      width:794,
-      height:sheet.offsetHeight,
-      style:{transform:'scale(1)',transformOrigin:'top left'},
-    });
+    showMsg('步驟2：截圖中…','ing');
+    const dataUrl=await domtoimage.toJpeg(sheet,{quality:0.92,width:794,height:sheet.offsetHeight});
+    sheet.setAttribute('style',origStyle);
+    showMsg('步驟3：產生PDF…','ing');
+    const img=new Image();
+    img.src=dataUrl;
+    await new Promise(r=>{img.onload=r;});
+    const {jsPDF}=window.jspdf;
+    const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    const margin=8,imgW=194;
+    const imgH=img.naturalHeight*(imgW/img.naturalWidth);
+    pdf.addImage(dataUrl,'JPEG',margin,margin,imgW,Math.min(imgH,281));
+    pdf.save(pdfFilename);
+    showMsg('✅ 完成：'+pdfFilename,'ok');
+  }catch(e){
+    document.getElementById('sheet').style.cssText='display:block;max-width:794px;width:100%;margin:16px auto;background:#fff;padding:0';
+    showMsg('❌ 錯誤：'+e.message,'err');
+    console.error(e);
+  }finally{
+    btn.disabled=false;btn.textContent='⬇ 下載 PDF';
+  }
+});
 
     sheet.setAttribute('style',origStyle);
 
