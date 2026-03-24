@@ -20,67 +20,37 @@ body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#f0f0f0;
 .btn-gen:active{background:#005bb5}
 .btn-pdf{width:100%;margin-top:10px;padding:13px;border:none;border-radius:10px;background:#28a745;color:#fff;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;display:none}
 .btn-pdf:active{background:#1e7e34}
-.btn-pdf:disabled{background:#8ecf9e;cursor:not-allowed}
 #msg{margin-top:10px;padding:10px 12px;border-radius:8px;font-size:13px;font-weight:600;display:none;text-align:center}
 .ok{background:#d4edda;color:#155724}.err{background:#f8d7da;color:#721c24}.ing{background:#cce5ff;color:#004085}
 hr{border:none;border-top:1px solid #ddd;margin:14px 0}
 .hint{font-size:12px;color:#888;text-align:center}
 
-/* ── 列印 CSS：Safari 分享→列印 存PDF用 ── */
+/* 列印CSS：Safari「分享→列印」用 */
 @media print{
-  /* 移除頁首頁尾（網址、時間、頁碼）*/
-  @page{
-    size:A4 portrait;
-    margin:8mm 8mm 8mm 8mm;
-  }
-  html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  body{margin:0;padding:0;background:#fff}
-  /* 隱藏輸入介面和按鈕 */
-  #ui,#btnPDF,.btn-gen,.btn-pdf{display:none!important}
-  /* 顯示組合單，強制填滿A4 */
-  #sheet{
-    display:block!important;
-    position:fixed;
-    top:0;left:0;
-    width:100vw!important;
-    min-width:0!important;
-    max-width:none!important;
-    margin:0!important;
-    padding:0!important;
-    background:#fff!important;
-  }
-  table.form{
-    width:100%!important;
-    height:calc(100vh - 0px)!important;
-    font-size:8.5pt;
-    table-layout:fixed;
-    page-break-inside:avoid;
-  }
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  @page{size:A4 portrait;margin:8mm}
+  #ui,#btnPDF{display:none!important}
+  body{background:#fff;margin:0;padding:0}
+  #sheet{display:block!important;width:100%!important;margin:0!important;padding:0!important}
+  table.form{width:100%!important;height:277mm;font-size:8.5pt}
   table.form td{padding:1px 3px}
-  .sz24{font-size:14pt!important}
-  .sz14{font-size:10pt!important}
-  .h44{height:34pt!important}
-  .h33{height:24pt!important}
-  .h22{height:17pt!important}
-  .h20{height:16.5pt!important}
-  .h18{height:12.5pt!important}
-  .yel{background:#ffff00!important;-webkit-print-color-adjust:exact!important}
-  .gray{background:#d9d9d9!important;-webkit-print-color-adjust:exact!important}
+  .sz24{font-size:14pt!important}.sz14{font-size:10pt!important}
+  .h44{height:34pt!important}.h33{height:24pt!important}
+  .h22{height:17pt!important}.h20{height:16pt!important}.h18{height:12pt!important}
+  .yel{background:#ffff00!important}.gray{background:#d9d9d9!important}
 }
 
-/* 組合單樣式 */
+/* 組合單 */
 #sheet{display:none;max-width:794px;width:100%;margin:16px auto;background:#fff;padding:0}
 #sheet.show{display:block}
-table.form{width:794px;border-collapse:collapse;font-family:"新細明體","PMingLiU","Microsoft JhengHei",serif;font-size:11pt;table-layout:fixed}
+table.form{width:100%;border-collapse:collapse;font-family:"新細明體","PMingLiU","Microsoft JhengHei",serif;font-size:11pt;table-layout:fixed}
 table.form td{padding:2px 5px;vertical-align:middle;word-break:break-all}
-.yel{background:#ffff00}
-.gray{background:#d9d9d9}
+.yel{background:#ffff00}.gray{background:#d9d9d9}
 .bt{border-top:1px solid #000}.btm{border-top:2.5px solid #000}
 .bb{border-bottom:1px solid #000}.bbm{border-bottom:2.5px solid #000}
 .bl{border-left:1px solid #000}.blm{border-left:2.5px solid #000}
 .br{border-right:1px solid #000}
-.bold{font-weight:bold}
-.c{text-align:center}.l{text-align:left}
+.bold{font-weight:bold}.c{text-align:center}.l{text-align:left}
 .h44{height:44px}.h33{height:33px}.h22{height:22px}.h20{height:20px}.h18{height:18px}
 .sz24{font-size:18pt}.sz14{font-size:13pt}
 </style>
@@ -110,13 +80,12 @@ table.form td{padding:2px 5px;vertical-align:middle;word-break:break-all}
   <div class="f" style="grid-column:1/-1"><label>訂單編號</label><input type="text" id="orderno" placeholder="訂單編號" autocomplete="off"></div>
 </div>
 <button class="btn-gen" id="btnGen">⚡ 生成組合單</button>
-<button class="btn-pdf" id="btnPDF">🖨 儲存 PDF（列印）</button>
+<button class="btn-pdf" id="btnPDF">🖨 儲存 PDF</button>
 <div id="msg"></div>
 <hr>
-<div class="hint">手機電腦皆可用 · 一鍵下載 PDF</div>
+<div class="hint">iPhone Safari：按「儲存PDF」→ 列印 → 用力下拉縮圖變PDF<br>電腦：按「儲存PDF」直接存</div>
 </div>
 
-<!-- 組合單（用於截圖轉PDF） -->
 <div id="sheet">
 <table class="form">
   <colgroup>
@@ -314,66 +283,61 @@ table.form td{padding:2px 5px;vertical-align:middle;word-break:break-all}
 </table>
 </div>
 
-<!-- html2canvas + jsPDF 本地檔案 -->
-<script src="jspdf.umd.min.js"></script>
 <script>
 const INV=[{"品名":"AN-011(R)黑 57*300 OUT","料號":"RRAN0116010005700300"},{"品名":"AN-011(R)黑 82*300 OUT","料號":"RRAN0116010008200300"},{"品名":"AN-210(R)黑 34*600 OUT","料號":"RRAN2106010003400600"},{"品名":"AN-510+ 黑 110*600 OUT","料號":"RSAN51P6010011000600"},{"品名":"AN-510+ 黑 34*50 OUT","料號":"RSAN51P6010003400050"},{"品名":"AN-510+ 黑 34*600 OUT","料號":"RSAN51P6010003400600"},{"品名":"AN-510+ 黑 55*600 OUT","料號":"RSAN51P6010005500600"},{"品名":"AN-510+ 黑 57*300 OUT","料號":"RSAN51P6010005700300"},{"品名":"AN-510+ 黑 82*300 OUT","料號":"RSAN51P6010008200300"},{"品名":"AR-710黑 82*300 OUT","料號":"RRAR7106010008200300"},{"品名":"AS-900黑 82*50 OUT","料號":"RSAS9006010008200050"},{"品名":"DN-320(R) 黑 34*600 OUT","料號":"RRDN3206010003400600"},{"品名":"DN-320(R) 黑 55*600 OUT","料號":"RRDN3206010005500600"},{"品名":"DN-320(R) 黑 57*300 OUT","料號":"RRDN3206010005700300"},{"品名":"DN-320(R) 黑 82*300 OUT","料號":"RRDN3206010008200300"},{"品名":"DN-320(R) 黑 110MM*280M IN 置中","料號":"RRDN3206M11011000280"},{"品名":"DN-421(R) 黑 55*600 OUT","料號":"RRDN4216010005500600"},{"品名":"DN-421(R) 黑 57*300 OUT","料號":"RRDN4216010005700300"},{"品名":"DN-421(R) 黑 82*300 OUT","料號":"RRDN4216010008200300"},{"品名":"DN-421(R) 黑 110*280 IN 置中","料號":"RRDN4216M11011000280"},{"品名":"DN-480(R) 黑 55*600 OUT","料號":"RRDN4806010005500600"},{"品名":"DN-561 (R) 白 55*600 OUT","料號":"RRDN5617010005500600"},{"品名":"DN-561 (R) 白 57*300 OUT","料號":"RRDN5617010005700300"},{"品名":"DN-561 (R) 黑 55*600 OUT","料號":"RRDN5616010005500600"},{"品名":"DN-561 (R) 黑 57*300 OUT","料號":"RRDN5616010005700300"},{"品名":"DN-561黑 110*280 IN 置中","料號":"RRDN5616M11011000280"},{"品名":"DN-707(R)黑 34*600 OUT","料號":"RRDN7A76010003400600"},{"品名":"DN-707(R)黑 57*300 OUT","料號":"RRDN7A76010005700300"},{"品名":"DN-707(R)黑 82*300 OUT","料號":"RRDN7A76010008200300"},{"品名":"DN-707(R)黑 110*600 OUT","料號":"RRDN7A76010011000600"},{"品名":"DN-808白 34*600 OUT","料號":"RSDN8087010003400600"},{"品名":"DN-808白 82*300 OUT","料號":"RSDN8087010008200300"},{"品名":"DN-808黑 34*600 OUT","料號":"RSDN8086010003400600"},{"品名":"DN-808黑 55*600 OUT","料號":"RSDN8086010005500600"},{"品名":"DN-808黑 82*300 OUT","料號":"RSDN8086010008200300"},{"品名":"EN-890 (R)黑 110*280 IN 置中","料號":"RREN8906M11011000280"},{"品名":"GN-314黑 34*600 OUT","料號":"RSGN3146010003400600"},{"品名":"GN-314黑 55*600 OUT","料號":"RSGN3146010005500600"},{"品名":"GN-331黑 34*600 OUT","料號":"RRGN3316010003400600"},{"品名":"GN-331黑 57*300 OUT","料號":"RRGN3316010005700300"},{"品名":"GN-331(R) 白 55MM*600M OUT","料號":"RRGN3317010005500600"},{"品名":"GN-331(R) 白 82MM*300M OUT","料號":"RRGN3317010008200300"},{"品名":"GN-512黑 34*600 OUT","料號":"RSGN5126010003400600"},{"品名":"GN-512黑 55*600 OUT","料號":"RSGN5126010005500600"},{"品名":"GN-811(R) 黑 110MM*280M IN 置中","料號":"RRGN8116M11011000280"},{"品名":"HL-35白 34*600 OUT","料號":"RRHL3507010003400600"},{"品名":"HL-35白 57*300 OUT","料號":"RRHL3507010005700300"},{"品名":"KN-830(R) 黑 34*600 OUT","料號":"RRKN8306010003400600"},{"品名":"KN-830(R) 黑 55*600 OUT","料號":"RRKN8306010005500600"},{"品名":"KN-830(R) 黑 57*300 OUT","料號":"RRKN8306010005700300"},{"品名":"KN-830(R) 黑 82*300 OUT","料號":"RRKN8306010008200300"},{"品名":"ON-222白 82MM*300M OUT","料號":"RSON2227010008200300"},{"品名":"ZR-810金 36*300 OUT","料號":"RRZR8101010003600300"},{"品名":"ZR-810金 82*300 OUT","料號":"RRZR8101010008200300"}];
 
 const t=new Date();
 const dateStr=t.getFullYear()+'.'+String(t.getMonth()+1).padStart(2,'0')+'.'+String(t.getDate()).padStart(2,'0');
+let pdfFilename='組合單.pdf';
 
 document.getElementById('partno').addEventListener('blur',function(){if(this.value)this.value=this.value.replace(/\D/g,'').padStart(4,'0');});
 document.getElementById('bracket').addEventListener('blur',function(){if(this.value)this.value=this.value.replace(/\D/g,'').padStart(4,'0');});
 
-function set(id,v){const el=document.getElementById(id);if(el&&v!=null&&v!=='')el.textContent=v;}
-function showMsg(txt,cls){const el=document.getElementById('msg');el.textContent=txt;el.className=cls;el.style.display=txt?'block':'none';}
-
-let pdfFilename='組合單.pdf';
+function set(id,v){var el=document.getElementById(id);if(el&&v!=null&&v!=='')el.textContent=v;}
+function showMsg(txt,cls){var el=document.getElementById('msg');el.textContent=txt;el.className=cls;el.style.display=txt?'block':'none';}
 
 document.getElementById('btnGen').addEventListener('click',function(){
-  // 診斷：確認 JS 執行到這裡
-  var libs='jspdf:'+(typeof window.jspdf)+' domtoimage:'+(typeof domtoimage);
-  console.log('btnGen clicked, libs='+libs);
-  const model=document.getElementById('model').value.trim();
+  var model=document.getElementById('model').value.trim();
   if(!model){showMsg('請先選擇機型','err');return;}
-  const customer=document.getElementById('customer').value.trim();
-  const partno=(document.getElementById('partno').value.trim()||'0000').padStart(4,'0');
-  const ribbon=document.getElementById('ribbon').value.trim();
-  const bracket=document.getElementById('bracket').value.trim();
-  const sales=document.getElementById('sales').value.trim();
-  const engineer=document.getElementById('engineer').value.trim();
-  const orderno=document.getElementById('orderno').value.trim();
+  var customer=document.getElementById('customer').value.trim();
+  var partno=(document.getElementById('partno').value.trim()||'0000').padStart(4,'0');
+  var ribbon=document.getElementById('ribbon').value.trim();
+  var bracket=document.getElementById('bracket').value.trim();
+  var sales=document.getElementById('sales').value.trim();
+  var engineer=document.getElementById('engineer').value.trim();
+  var orderno=document.getElementById('orderno').value.trim();
 
-  const MM={
+  var MM={
     '6330 1inch LH':['TTO 32MM VJ6330 LEFT HAND','QQTTO32VJ6330LH00000'],
     '6330 1inch RH':['TTO 32MM VJ6330 RIGHT HAND','QQTTO32VJ6330RH00000'],
     '6330 2inch LH':['TTO 53MM VJ6330 LEFT HAND','QQTTO53VJ6330LH00000'],
     '6330 2inch RH':['TTO 53MM VJ6330 RIGHT HAND','QQTTO53VJ6330RH00000'],
     '6530 LH':['TTO 53MM VJ6530 LEFT HAND','QQTTO53VJ6530LH00000'],
     '6530 RH':['TTO 53MM VJ6530 RIGHT HAND','QQTTO53VJ6530RH00000'],
-    'MP2':['OPS-MP 2\" 手動機','QQAOPSMP200000000000'],
-    'MP3':['OPS-MP 3\" 手動機','QQAOPSMP300000000000'],
-    'MP4':['OPS-MP 4\" 手動機','QQAOPSMP400000000000'],
-    '610AP2':['OPS-MP 2\" 手動機','QQAOPSMP200000000000'],
-    '610AP3':['OPS-MP 3\" 手動機','QQAOPSMP300000000000'],
-    '610AP4':['OPS-MP4 \" 手動機','QQAOPSMP400000000000'],
+    'MP2':['OPS-MP 2" 手動機','QQAOPSMP200000000000'],
+    'MP3':['OPS-MP 3" 手動機','QQAOPSMP300000000000'],
+    'MP4':['OPS-MP 4" 手動機','QQAOPSMP400000000000'],
+    '610AP2':['OPS-MP 2" 手動機','QQAOPSMP200000000000'],
+    '610AP3':['OPS-MP 3" 手動機','QQAOPSMP300000000000'],
+    '610AP4':['OPS-MP4 " 手動機','QQAOPSMP400000000000']
   };
 
-  // 清空所有可填欄位
+  // 清空所有填入格
   ['r8c','r8d','r8e','r9c','r14c','r14d','r14e','r15c',
    'r21c','r21d','r21e','r22c','r24c','r24d','r24e','r25c',
    'r27c','r27d','r27e','r28c','r32c','r32d','r32e','r33c',
-   'r35c','r35d','r35e','r36c','r38c','r38d','r38e','r39c',
-   'td-date','td-cust','r41e','r43e','r45c'
-  ].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=
-    id==='r41e'?'業   務   員 ：':id==='r43e'?'技 術 人 員 ：':id==='r45c'?'訂單編號：':id==='td-cust'?'客戶名稱：':'';
+   'r35c','r35d','r35e','r36c','r38c','r38d','r38e','r39c'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.textContent='';
   });
+  document.getElementById('r41e').textContent='業   務   員 ：';
+  document.getElementById('r43e').textContent='技 術 人 員 ：';
+  document.getElementById('r45c').textContent='訂單編號：';
 
   set('td-date',dateStr);
   set('td-cust','客戶名稱：'+(customer||''));
 
   if(MM[model]){
-    const[c14,c15]=MM[model];
+    var c14=MM[model][0],c15=MM[model][1];
     set('r8c',c14+(customer?' ('+customer+')':''));
     set('r8d','TQ');set('r8e','1');
     set('r9c',c15.substring(0,16)+partno);
@@ -408,22 +372,24 @@ document.getElementById('btnGen').addEventListener('click',function(){
   set('r33c','QQTHERMALHEADCLEANER');
 
   if(ribbon){
-    const rc=ribbon.toUpperCase().replace(/[-_ ]/g,'');
-    let sz='';
+    var rc=ribbon.toUpperCase().replace(/[-_ ]/g,'');
+    var sz='';
     if(/1inch/.test(model))sz='34*600 OUT';
     else if(/6530|2inch/.test(model))sz='55*600 OUT';
     else if(/MP2|AP2/.test(model))sz='57*300 OUT';
     else if(/MP3|AP3/.test(model))sz='82*300 OUT';
     else if(/MP4|AP4/.test(model))sz='110*280 IN 置中';
     if(sz){
-      const hit=INV.find(i=>i['品名'].toUpperCase().replace(/[-_ (R)\s]/g,'').includes(rc)&&i['品名'].includes(sz));
+      var hit=INV.find(function(i){
+        return i['品名'].toUpperCase().replace(/[-_ (R)\s]/g,'').includes(rc)&&i['品名'].includes(sz);
+      });
       if(hit){set('r35c',hit['品名']);set('r35d','TA');set('r35e','1');set('r36c',hit['料號']);}
       else set('r35c','⚠ 未找到：'+ribbon+' × '+sz);
     }
   }
 
   if(bracket){
-    const bp=bracket.padStart(4,'0');
+    var bp=bracket.padStart(4,'0');
     set('r38c','支架'+bp+(customer?' ('+customer+')':''));
     set('r38d','TQ');set('r38e','1');
     set('r39c',('QQTTT00000000000'+bp).substring(0,20));
@@ -434,300 +400,16 @@ document.getElementById('btnGen').addEventListener('click',function(){
   if(orderno)set('r45c','訂單編號：'+orderno);
 
   pdfFilename='組合單-'+model+(customer?'-'+customer:'')+'.pdf';
+  document.title='組合單-'+model+(customer?'-'+customer:'');
 
   document.getElementById('sheet').className='show';
   document.getElementById('btnPDF').style.display='block';
-  showMsg('✅ 組合單已生成，請按「下載 PDF」','ok');
+  showMsg('✅ 已生成！請按「🖨 儲存 PDF」','ok');
   document.getElementById('btnPDF').scrollIntoView({behavior:'smooth',block:'nearest'});
 });
 
-document.getElementById('btnPDF').addEventListener('click',async function(){
-  var libStatus='jspdf:'+(typeof window.jspdf)+' | domtoimage:'+(typeof domtoimage);
-  showMsg('函式庫狀態：'+libStatus,'ing');
-  if(typeof window.jspdf==='undefined'){
-    showMsg('❌ jsPDF 未載入 — 請截圖回報','err');
-    return;
-  }
-  if(typeof domtoimage==='undefined'){
-    showMsg('❌ dom-to-image 未載入 — 請截圖回報','err');
-    return;
-  }
-  const btn=this;
-  btn.disabled=true;
-  btn.textContent='⏳ 截圖中…';
-  showMsg('步驟1：準備截圖…','ing');
-  try{
-    const sheet=document.getElementById('sheet');
-    const origStyle=sheet.getAttribute('style')||'';
-    sheet.style.cssText='display:block;width:794px;min-width:794px;position:absolute;top:0;left:0;z-index:-1;background:#fff;margin:0;padding:0';
-    await new Promise(r=>setTimeout(r,400));
-    showMsg('步驟2：截圖中…','ing');
-    const dataUrl=await domtoimage.toJpeg(sheet,{quality:0.92,width:794,height:sheet.offsetHeight});
-    sheet.setAttribute('style',origStyle);
-    showMsg('步驟3：產生PDF…','ing');
-    const img=new Image();
-    img.src=dataUrl;
-    await new Promise(r=>{img.onload=r;});
-    const {jsPDF}=window.jspdf;
-    const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-    const margin=8,imgW=194;
-    const imgH=img.naturalHeight*(imgW/img.naturalWidth);
-    pdf.addImage(dataUrl,'JPEG',margin,margin,imgW,Math.min(imgH,281));
-    pdf.save(pdfFilename);
-    showMsg('✅ 完成：'+pdfFilename,'ok');
-  }catch(e){
-    document.getElementById('sheet').style.cssText='display:block;max-width:794px;width:100%;margin:16px auto;background:#fff;padding:0';
-    showMsg('❌ 錯誤：'+e.message,'err');
-    console.error(e);
-  }finally{
-    btn.disabled=false;btn.textContent='⬇ 下載 PDF';
-  }
-});
-
-    sheet.setAttribute('style',origStyle);
-
-    const img=new Image();
-    img.src=dataUrl;
-    await new Promise(r=>{img.onload=r;});
-
-    const {jsPDF}=window.jspdf;
-    const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-    const margin=8;
-    const imgW=210-margin*2;
-    const imgH=img.naturalHeight*(imgW/img.naturalWidth);
-    const finalH=Math.min(imgH,297-margin*2);
-    pdf.addImage(dataUrl,'JPEG',margin,margin,imgW,finalH);
-    pdf.save(pdfFilename);
-    showMsg('✅ PDF 已下載：'+pdfFilename,'ok');
-  }catch(e){
-    const sheet=document.getElementById('sheet');
-    sheet.style.cssText='display:block;max-width:794px;width:100%;margin:16px auto;background:#fff;padding:0';
-    showMsg('❌ 錯誤：'+e.message,'err');
-    console.error(e);
-  }finally{
-    btn.disabled=false;
-    btn.textContent='⬇ 下載 PDF';
-  }
-});
-
-    // 載入中文字型（使用內建的 helvetica，英文+數字）
-    // 邊框與表格由線條繪製
-    const lm=10, rm=200, cw=190; // left/right margin, content width
-    let y=10;
-
-    function hline(yy,lw){doc.setLineWidth(lw||0.3);doc.line(lm,yy,rm,yy);}
-    function vline(x,y1,y2,lw){doc.setLineWidth(lw||0.3);doc.line(x,y1,x,y2);}
-    function box(x,y,w,h,lw){doc.setLineWidth(lw||0.3);doc.rect(x,y,w,h);}
-    function txt(t,x,yy,sz,bold,align){
-      doc.setFontSize(sz||10);
-      doc.setFont('helvetica', bold?'bold':'normal');
-      doc.text(String(t||''),x,yy,{align:align||'left'});
-    }
-    function cell(t,x,yy,w,h,sz,bold,align,fill){
-      if(fill){doc.setFillColor(...fill);doc.rect(x,yy-h+1,w,h,'F');}
-      doc.setLineWidth(0.2);doc.rect(x,yy-h+1,w,h);
-      doc.setFontSize(sz||9);
-      doc.setFont('helvetica',bold?'bold':'normal');
-      const tx=align==='center'?x+w/2:align==='right'?x+w-1:x+1;
-      doc.text(String(t||''),tx,yy-1,{align:align||'left',maxWidth:w-2});
-    }
-
-    // 取得畫面上的資料
-    function g(id){return (document.getElementById(id)||{}).textContent||'';}
-
-    // === 標題區 ===
-    doc.setFontSize(18);doc.setFont('helvetica','bold');
-    doc.text('Tuo Chang Trading Co., Ltd.',105,y+7,{align:'center'});
-    y+=13;
-    doc.setFontSize(13);
-    doc.text('( Ho Chang Gold Foil )',105,y+5,{align:'center'});
-    y+=10;
-    doc.setFontSize(16);
-    doc.text('COMBINATION ORDER',105,y+6,{align:'center'});
-    y+=11;
-
-    // === 客戶資訊 ===
-    doc.setFontSize(9);doc.setFont('helvetica','normal');
-    const custName=g('td-cust');
-    const dateVal=g('td-date');
-    doc.text('Customer No.:', lm, y+4);
-    doc.text('Date: '+dateVal, 105, y+4);
-    y+=7;
-    doc.text(custName, lm, y+4);
-    doc.text('Sales No.:', 105, y+4);
-    y+=7;
-
-    // === 表頭 ===
-    const colX=[lm,130,145,158,172]; // 品名|儲位|數量|單位|備註
-    const colW=[120,15,13,14,28];
-    const rh=7; // row height
-    hline(y,0.5);
-    cell('Product Name',colX[0],y+rh,colW[0],rh,9,true,'left');
-    cell('Loc',colX[1],y+rh,colW[1],rh,9,true,'center');
-    cell('Qty',colX[2],y+rh,colW[2],rh,9,true,'center');
-    cell('Unit',colX[3],y+rh,colW[3],rh,9,true,'center');
-    cell('Note',colX[4],y+rh,colW[4],rh,9,true,'center');
-    y+=rh;
-
-    // 資料行函數
-    function dataRow(name,loc,qty,unit,isYellow){
-      const fill=isYellow?[255,255,0]:null;
-      cell(name,colX[0],y+rh,colW[0],rh,8,false,'left',fill);
-      cell(loc,colX[1],y+rh,colW[1],rh,8,false,'center',fill);
-      cell(qty,colX[2],y+rh,colW[2],rh,8,false,'center',fill);
-      cell(unit,colX[3],y+rh,colW[3],rh,8,false,'center',null);
-      cell('',colX[4],y+rh,colW[4],rh,8,false,'left',null);
-      y+=rh;
-    }
-
-    // 分節標題
-    function sectionHeader(title){
-      doc.setFillColor(217,217,217);
-      doc.rect(lm,y,cw,rh,'F');
-      doc.setLineWidth(0.5);doc.rect(lm,y,cw,rh);
-      doc.setFontSize(9);doc.setFont('helvetica','bold');
-      doc.text(title,105,y+rh-2,{align:'center'});
-      y+=rh;
-    }
-
-    // === 銷貨品名 ===
-    const r8c=g('r8c'), r8d=g('r8d'), r8e=g('r8e');
-    const r9c=g('r9c');
-    if(r8c){
-      dataRow(r8c,r8d,r8e,'台',true);
-      if(r9c) dataRow(r9c,'','','',true);
-    }
-    y+=2;
-
-    // === 組合品項 ===
-    sectionHeader('COMBINATION ITEMS');
-    sectionHeader('Main Machine');
-    const r14c=g('r14c'),r14d=g('r14d'),r14e=g('r14e'),r15c=g('r15c');
-    if(r14c){
-      dataRow(r14c,r14d,r14e,'台',true);
-      if(r15c) dataRow(r15c,'','','',true);
-    }
-    // 空行
-    for(let i=0;i<3;i++) dataRow('','','','',false);
-
-    // === 機器配件 ===
-    sectionHeader('Accessories');
-    const r21c=g('r21c'),r21d=g('r21d'),r21e=g('r21e'),r22c=g('r22c');
-    const r24c=g('r24c'),r24d=g('r24d'),r24e=g('r24e'),r25c=g('r25c');
-    const r27c=g('r27c'),r27d=g('r27d'),r27e=g('r27e'),r28c=g('r28c');
-    if(r21c){dataRow(r21c,r21d,r21e,'組',true);dataRow(r22c,'','','',true);}
-    else{dataRow('','','','',false);dataRow('','','','',false);}
-    dataRow('','','','',false);
-    if(r24c){dataRow(r24c,r24d,r24e,'組',true);dataRow(r25c,'','','',true);}
-    else{dataRow('','','','',false);dataRow('','','','',false);}
-    dataRow('','','','',false);
-    if(r27c){dataRow(r27c,r27d,r27e,'組',true);dataRow(r28c,'','','',true);}
-    else{dataRow('','','','',false);dataRow('','','','',false);}
-    dataRow('','','','',false);dataRow('','','','',false);
-
-    // === 搭贈 ===
-    sectionHeader('Complimentary');
-    const r32c=g('r32c'),r32d=g('r32d'),r32e=g('r32e'),r33c=g('r33c');
-    const r35c=g('r35c'),r35d=g('r35d'),r35e=g('r35e'),r36c=g('r36c');
-    if(r32c){dataRow(r32c,r32d,r32e,'組',true);dataRow(r33c,'','','',true);}
-    else{dataRow('','','','',false);dataRow('','','','',false);}
-    dataRow('','','','',false);
-    if(r35c&&!r35c.startsWith('⚠')){dataRow(r35c,r35d,r35e,'捲',true);dataRow(r36c,'','','',true);}
-    else{dataRow('','','','',false);dataRow('','','','',false);}
-
-    // === 支架 ===
-    sectionHeader('Bracket');
-    const r38c=g('r38c'),r38d=g('r38d'),r38e=g('r38e'),r39c=g('r39c');
-    if(r38c){dataRow(r38c,r38d,r38e,'套',true);dataRow(r39c,'','','',true);}
-    else{dataRow('','','','',false);dataRow('','','','',false);}
-    dataRow('','','','',false);
-
-    // === 人員 ===
-    y+=3;
-    doc.setFontSize(9);doc.setFont('helvetica','normal');
-    const sales=g('r41e'), engineer=g('r43e'), orderno=g('r45c');
-    doc.text('Sales Manager:', lm, y+4);
-    doc.setFillColor(255,255,0);
-    doc.rect(105,y,95,6,'F');
-    doc.text(sales, 106, y+4);
-    y+=8;
-    doc.text('Tech Manager:', lm, y+4);
-    doc.setFillColor(255,255,0);
-    doc.rect(105,y,95,6,'F');
-    doc.text(engineer, 106, y+4);
-    y+=8;
-    doc.setFillColor(255,255,0);
-    doc.rect(lm,y,95,6,'F');
-    doc.text(orderno, lm+1, y+4);
-    doc.text('Warehouse:', 106, y+4);
-
-    doc.save(pdfFilename);
-    showMsg('✅ PDF 已下載：'+pdfFilename,'ok');
-  }catch(e){
-    showMsg('❌ 錯誤：'+e.message,'err');
-    console.error(e);
-  }finally{
-    btn.disabled=false;
-    btn.textContent='⬇ 下載 PDF';
-  }
-});
-    // 還原
-    sheet.style.cssText=origStyle||'display:block;max-width:794px;width:100%;margin:16px auto;background:#fff;padding:0';
-    const {jsPDF}=window.jspdf;
-    const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-    const margin=8;
-    const imgW=210-margin*2;
-    const imgH=canvas.height*(imgW/canvas.width);
-    const finalH=Math.min(imgH,297-margin*2);
-    pdf.addImage(canvas.toDataURL('image/jpeg',0.92),'JPEG',margin,margin,imgW,finalH);
-    pdf.save(pdfFilename);
-    showMsg('✅ PDF 已下載：'+pdfFilename,'ok');
-  }catch(e){
-    // 還原 sheet 樣式
-    const sheet=document.getElementById('sheet');
-    sheet.style.cssText='display:block;max-width:794px;width:100%;margin:16px auto;background:#fff;padding:0';
-    showMsg('❌ 錯誤：'+e.message,'err');
-    console.error(e);
-  }finally{
-    btn.disabled=false;
-    btn.textContent='⬇ 下載 PDF';
-  }
-});
-    sheet.setAttribute('style',origStyle);
-    const {jsPDF}=window.jspdf;
-    const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-    const margin=8;
-    const imgW=210-margin*2;
-    const imgH=canvas.height*(imgW/canvas.width);
-    const finalH=Math.min(imgH,297-margin*2);
-    pdf.addImage(canvas.toDataURL('image/jpeg',0.92),'JPEG',margin,margin,imgW,finalH);
-    pdf.save(pdfFilename);
-    showMsg('✅ PDF 已下載：'+pdfFilename,'ok');
-  }catch(e){
-    showMsg('❌ 錯誤：'+e.message,'err');
-    console.error(e);
-  }finally{
-    btn.disabled=false;
-    btn.textContent='⬇ 下載 PDF';
-  }
-});
-    sheet.setAttribute('style',origStyle);
-    const {jsPDF}=window.jspdf;
-    const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-    const margin=8;
-    const imgW=210-margin*2;
-    const imgH=canvas.height*(imgW/canvas.width);
-    const finalH=Math.min(imgH,297-margin*2);
-    pdf.addImage(canvas.toDataURL('image/jpeg',0.92),'JPEG',margin,margin,imgW,finalH);
-    pdf.save(pdfFilename);
-    showMsg('✅ PDF 已下載：'+pdfFilename,'ok');
-  }catch(e){
-    showMsg('❌ 錯誤：'+e.message+' — 請確認 html2canvas.min.js 和 jspdf.umd.min.js 已上傳到 GitHub','err');
-    console.error(e);
-  }finally{
-    btn.disabled=false;
-    btn.textContent='⬇ 下載 PDF';
-  }
+document.getElementById('btnPDF').addEventListener('click',function(){
+  window.print();
 });
 </script>
 </body>
