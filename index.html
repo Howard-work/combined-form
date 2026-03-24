@@ -26,14 +26,15 @@ hr{border:none;border-top:1px solid #ddd;margin:14px 0}
 @media print{
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
   @page{size:A4 portrait;margin:6mm}
-  #ui,#btnPDF{display:none!important}
+  #ui,#btnPDF,#msg,hr,.hint{display:none!important}
   body{background:#fff;margin:0;padding:0}
-  #sheet{display:block!important;width:100%!important;margin:0!important;padding:0!important}
-  table.form{width:100%!important;height:282mm;font-size:7.8pt;table-layout:fixed}
-  table.form td{padding:0px 2px;line-height:1.1}
+  #sheet{display:block!important;width:100%!important;margin:0!important;padding:0!important;page-break-after:avoid}
+  table.form{width:100%!important;font-size:7.8pt;table-layout:fixed;border-collapse:collapse;page-break-inside:avoid}
+  table.form tr{page-break-inside:avoid;page-break-after:avoid}
+  table.form td{padding:0 2px;line-height:1.1;overflow:hidden}
   .sz24{font-size:12pt!important}.sz14{font-size:9pt!important}
-  .h44{height:30pt!important}.h33{height:21pt!important}
-  .h22{height:14.5pt!important}.h20{height:13.5pt!important}.h18{height:10pt!important}
+  .h44{height:39pt!important}.h33{height:27pt!important}
+  .h22{height:19pt!important}.h20{height:17.5pt!important}.h18{height:13pt!important}
   .yel{background:#ffff00!important}.gray{background:#d9d9d9!important}
 }
 
