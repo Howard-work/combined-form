@@ -16,39 +16,63 @@ body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#f0f0f0;
 .f input,.f select{padding:9px 11px;border:1.5px solid #ddd;border-radius:8px;font-size:14px;font-family:inherit;background:#fff;outline:none;-webkit-appearance:none}
 .f input:focus,.f select:focus{border-color:#0071e3}
 .f input[readonly]{background:#f5f5f5;color:#888}
-.btn{width:100%;margin-top:14px;padding:13px;border:none;border-radius:10px;background:#0071e3;color:#fff;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer}
-.btn:active{background:#005bb5}
+.btn-gen{width:100%;margin-top:14px;padding:13px;border:none;border-radius:10px;background:#0071e3;color:#fff;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer}
+.btn-gen:active{background:#005bb5}
+.btn-pdf{width:100%;margin-top:10px;padding:13px;border:none;border-radius:10px;background:#28a745;color:#fff;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;display:none}
+.btn-pdf:active{background:#1e7e34}
+.btn-pdf:disabled{background:#8ecf9e;cursor:not-allowed}
 #msg{margin-top:10px;padding:10px 12px;border-radius:8px;font-size:13px;font-weight:600;display:none;text-align:center}
-.ok{background:#d4edda;color:#155724}.err{background:#f8d7da;color:#721c24}
+.ok{background:#d4edda;color:#155724}.err{background:#f8d7da;color:#721c24}.ing{background:#cce5ff;color:#004085}
 hr{border:none;border-top:1px solid #ddd;margin:14px 0}
 .hint{font-size:12px;color:#888;text-align:center}
 
-/* 列印時隱藏UI，填滿A4單頁 */
+/* ── 列印 CSS：Safari 分享→列印 存PDF用 ── */
 @media print{
-  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
-  #ui{display:none!important}
-  #btnPrint{display:none!important}
-  #sheet{display:block!important;margin:0;padding:0}
-  body{background:#fff;margin:0;padding:0}
-  @page{size:A4 portrait;margin:8mm}
-  #sheet table.form{font-size:10pt;width:100%;height:277mm;table-layout:fixed}
-  #sheet table.form td{padding:1px 4px}
-  .sz24{font-size:16pt!important}
-  .sz14{font-size:11pt!important}
-  .h44{height:35pt!important}
-  .h33{height:25pt!important}
-  .h22{height:18pt!important}
-  .h20{height:17.5pt!important}
-  .h18{height:13pt!important}
-  .yel{background:#ffff00!important}
-  .gray{background:#d9d9d9!important}
+  /* 移除頁首頁尾（網址、時間、頁碼）*/
+  @page{
+    size:A4 portrait;
+    margin:8mm 8mm 8mm 8mm;
+  }
+  html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{margin:0;padding:0;background:#fff}
+  /* 隱藏輸入介面和按鈕 */
+  #ui,#btnPDF,.btn-gen,.btn-pdf{display:none!important}
+  /* 顯示組合單，強制填滿A4 */
+  #sheet{
+    display:block!important;
+    position:fixed;
+    top:0;left:0;
+    width:100vw!important;
+    min-width:0!important;
+    max-width:none!important;
+    margin:0!important;
+    padding:0!important;
+    background:#fff!important;
+  }
+  table.form{
+    width:100%!important;
+    height:calc(100vh - 0px)!important;
+    font-size:8.5pt;
+    table-layout:fixed;
+    page-break-inside:avoid;
+  }
+  table.form td{padding:1px 3px}
+  .sz24{font-size:14pt!important}
+  .sz14{font-size:10pt!important}
+  .h44{height:34pt!important}
+  .h33{height:24pt!important}
+  .h22{height:17pt!important}
+  .h20{height:16.5pt!important}
+  .h18{height:12.5pt!important}
+  .yel{background:#ffff00!important;-webkit-print-color-adjust:exact!important}
+  .gray{background:#d9d9d9!important;-webkit-print-color-adjust:exact!important}
 }
 
 /* 組合單樣式 */
-#sheet{display:none;max-width:720px;margin:16px auto;padding:16px;background:#fff}
+#sheet{display:none;max-width:794px;width:100%;margin:16px auto;background:#fff;padding:0}
 #sheet.show{display:block}
-table.form{width:100%;border-collapse:collapse;font-family:"新細明體","PMingLiU",serif;font-size:11pt;table-layout:fixed}
-table.form td{padding:2px 5px;vertical-align:middle;white-space:pre-wrap;word-break:break-all}
+table.form{width:794px;border-collapse:collapse;font-family:"新細明體","PMingLiU","Microsoft JhengHei",serif;font-size:11pt;table-layout:fixed}
+table.form td{padding:2px 5px;vertical-align:middle;word-break:break-all}
 .yel{background:#ffff00}
 .gray{background:#d9d9d9}
 .bt{border-top:1px solid #000}.btm{border-top:2.5px solid #000}
@@ -57,15 +81,12 @@ table.form td{padding:2px 5px;vertical-align:middle;white-space:pre-wrap;word-br
 .br{border-right:1px solid #000}
 .bold{font-weight:bold}
 .c{text-align:center}.l{text-align:left}
-.h33{height:33px}.h44{height:44px}.h22{height:22px}.h20{height:20px}.h18{height:18px}
+.h44{height:44px}.h33{height:33px}.h22{height:22px}.h20{height:20px}.h18{height:18px}
 .sz24{font-size:18pt}.sz14{font-size:13pt}
-.print-btn{display:block;width:100%;max-width:720px;margin:0 auto 10px;padding:11px;border:none;border-radius:10px;background:#28a745;color:#fff;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer}
-@media print{.print-btn{display:none}}
 </style>
 </head>
 <body>
 
-<!-- 輸入介面 -->
 <div id="ui">
 <div class="t">📋 拓昶貿易 組合單生成器</div>
 <div class="g">
@@ -88,67 +109,53 @@ table.form td{padding:2px 5px;vertical-align:middle;white-space:pre-wrap;word-br
   <div class="f"><label>工程師</label><input type="text" id="engineer" placeholder="工程師姓名" autocomplete="off"></div>
   <div class="f" style="grid-column:1/-1"><label>訂單編號</label><input type="text" id="orderno" placeholder="訂單編號" autocomplete="off"></div>
 </div>
-<button class="btn" id="btnGen">⬇ 生成組合單</button>
+<button class="btn-gen" id="btnGen">⚡ 生成組合單</button>
+<button class="btn-pdf" id="btnPDF">🖨 儲存 PDF（列印）</button>
 <div id="msg"></div>
 <hr>
-<div class="hint">生成後點「列印為 PDF」即可儲存 · 完全離線 · 無需安裝任何軟體</div>
+<div class="hint">手機電腦皆可用 · 一鍵下載 PDF</div>
 </div>
 
-<!-- 組合單表格 -->
-<button class="print-btn" id="btnPrint" style="display:none" onclick="window.print()">🖨 列印 / 儲存為 PDF</button>
+<!-- 組合單（用於截圖轉PDF） -->
 <div id="sheet">
 <table class="form">
   <colgroup>
-    <col style="width:2%"><col style="width:2%">
-    <col style="width:46%"><col style="width:9%"><col style="width:8%">
-    <col style="width:7%"><col style="width:13%"><col style="width:13%">
+    <col style="width:16px"><col style="width:16px">
+    <col style="width:365px"><col style="width:71px"><col style="width:63px">
+    <col style="width:55px"><col style="width:103px"><col style="width:85px">
   </colgroup>
   <tbody>
-  <!-- R1 公司名 -->
   <tr class="h33"><td></td><td></td><td colspan="6" class="bold sz24 c">拓 昶 貿 易 股 份 有 限 公 司</td></tr>
-  <!-- R2 副標 -->
   <tr class="h44"><td></td><td></td><td colspan="6" class="bold sz24 c">（ 合 昌 金 箔 ）</td></tr>
-  <!-- R3 組合單 -->
   <tr class="h33"><td></td><td></td><td colspan="6" class="bold sz24 c">組　　　　合　　　　單</td></tr>
-  <!-- R4 客戶編號/銷貨日期 -->
   <tr class="h20"><td></td><td></td>
     <td class="bold l">客戶編號：</td>
     <td class="bold l">銷貨日期：</td><td></td>
     <td colspan="3" class="yel bold l" id="td-date"></td>
   </tr>
-  <!-- R5 客戶名稱/銷貨編號 -->
   <tr class="h20"><td></td><td></td>
     <td class="yel bold l" id="td-cust">客戶名稱：</td>
     <td colspan="5" class="bold l">銷貨編號：</td>
   </tr>
-  <!-- R6 空 -->
   <tr class="h18"><td colspan="8"></td></tr>
-  <!-- R7 表頭 -->
-  <tr class="h22">
-    <td></td><td></td>
+  <tr class="h22"><td></td><td></td>
     <td class="bold sz14 btm bbm blm br c">銷　　貨　　品　　名</td>
     <td class="bold btm bbm bl br c">儲位</td>
     <td class="bold btm bbm bl br c">數量</td>
     <td class="bold btm bbm bl br c">單位</td>
-    <td colspan="2" class="bold btm bbm bl br c">備　　　　　　　　　　　　　　　　　　　注</td>
+    <td colspan="2" class="bold btm bbm bl br c">備　　　　　　　　　注</td>
   </tr>
-  <!-- R8 銷貨品名主體 -->
   <tr class="h20"><td></td><td></td>
     <td class="yel bl br bb" id="r8c"></td>
     <td class="yel bl br bb c" id="r8d"></td>
     <td class="yel bl br bb c" id="r8e"></td>
-    <td class="bl br bb c">台</td>
-    <td colspan="2" class="bl br bb"></td>
+    <td class="bl br bb c">台</td><td colspan="2" class="bl br bb"></td>
   </tr>
-  <!-- R9 料號行 -->
   <tr class="h20"><td></td><td></td>
     <td class="yel bl br bt bb" id="r9c"></td>
-    <td class="bl br bt bb c"></td>
-    <td class="bl br bt bb c"></td>
-    <td class="bl br bt bb c"></td>
-    <td colspan="2" class="bl br bt bb"></td>
+    <td class="bl br bt bb c"></td><td class="bl br bt bb c"></td>
+    <td class="bl br bt bb c"></td><td colspan="2" class="bl br bt bb"></td>
   </tr>
-  <!-- R10~11 空行 -->
   <tr class="h20"><td></td><td></td>
     <td class="bl br bt bb"></td><td class="bl br bt bb c"></td><td class="bl br bt bb c"></td>
     <td class="bl br bt bb c"></td><td colspan="2" class="bl br bt bb"></td>
@@ -157,29 +164,23 @@ table.form td{padding:2px 5px;vertical-align:middle;white-space:pre-wrap;word-br
     <td class="bl br bt"></td><td class="bl br bt c"></td><td class="bl br bt c"></td>
     <td class="bl br bt c"></td><td colspan="2" class="bl br bt"></td>
   </tr>
-  <!-- R12 組合品項 -->
   <tr class="h22"><td></td><td></td>
     <td colspan="6" class="bold btm blm bbm br c gray">組　　　合　　　品　　　項</td>
   </tr>
-  <!-- R13 機器本體 -->
   <tr class="h22"><td></td><td></td>
     <td colspan="6" class="bold bt bbm blm br c gray">機　　　器　　　本　　　體</td>
   </tr>
-  <!-- R14 主機 -->
   <tr class="h20"><td></td><td></td>
     <td class="yel bt bb bl br l" id="r14c"></td>
     <td class="yel bb bl br c" id="r14d"></td>
     <td class="yel bb bl br c" id="r14e"></td>
-    <td class="bb bl br c">台</td>
-    <td colspan="2" class="bb bl br"></td>
+    <td class="bb bl br c">台</td><td colspan="2" class="bb bl br"></td>
   </tr>
-  <!-- R15 料號 -->
   <tr class="h20"><td></td><td></td>
     <td class="yel bt bb bl br l" id="r15c"></td>
     <td class="bt bb bl br c"></td><td class="bt bb bl br c"></td>
     <td class="bt bb bl br c"></td><td colspan="2" class="bt bb bl br"></td>
   </tr>
-  <!-- R16~19 空行 -->
   <tr class="h20"><td></td><td></td>
     <td class="bt bb bl br"></td><td class="bt bb bl br c"></td><td class="bt bb bl br c"></td>
     <td class="bt bb bl br c"></td><td colspan="2" class="bt bb bl br"></td>
@@ -196,63 +197,50 @@ table.form td{padding:2px 5px;vertical-align:middle;white-space:pre-wrap;word-br
     <td class="bt bl br"></td><td class="bt bl br c"></td><td class="bt bl br c"></td>
     <td class="bt bl br c"></td><td colspan="2" class="bt bl br"></td>
   </tr>
-  <!-- R20 機器配件 -->
   <tr class="h22"><td></td><td></td>
     <td colspan="6" class="bold btm bbm blm br c gray">機　　　器　　　配　　　件</td>
   </tr>
-  <!-- R21 配件1 -->
   <tr class="h20"><td></td><td></td>
     <td class="yel bt bb bl br l" id="r21c"></td>
     <td class="yel bb bl br c" id="r21d"></td>
     <td class="yel bb bl br c" id="r21e"></td>
-    <td class="bb bl br c">組</td>
-    <td colspan="2" class="bb bl br"></td>
+    <td class="bb bl br c">組</td><td colspan="2" class="bb bl br"></td>
   </tr>
-  <!-- R22 料號 -->
   <tr class="h20"><td></td><td></td>
     <td class="yel bt bb bl br l" id="r22c"></td>
     <td class="bt bb bl br c"></td><td class="bt bb bl br c"></td>
     <td class="bt bb bl br c"></td><td colspan="2" class="bt bb bl br"></td>
   </tr>
-  <!-- R23 空 -->
   <tr class="h20"><td></td><td></td>
     <td class="bt bb bl br"></td><td class="bt bb bl br c"></td><td class="bt bb bl br c"></td>
     <td class="bt bb bl br c"></td><td colspan="2" class="bt bb bl br"></td>
   </tr>
-  <!-- R24 配件2 -->
   <tr class="h20"><td></td><td></td>
     <td class="yel bt bb bl br l" id="r24c"></td>
     <td class="yel bt bb bl br c" id="r24d"></td>
     <td class="yel bt bb bl br c" id="r24e"></td>
-    <td class="bt bb bl br c">組</td>
-    <td colspan="2" class="bt bb bl br"></td>
+    <td class="bt bb bl br c">組</td><td colspan="2" class="bt bb bl br"></td>
   </tr>
-  <!-- R25 料號 -->
   <tr class="h20"><td></td><td></td>
     <td class="yel bt bb bl br l" id="r25c"></td>
     <td class="bt bb bl br c"></td><td class="bt bb bl br c"></td>
     <td class="bt bb bl br c"></td><td colspan="2" class="bt bb bl br"></td>
   </tr>
-  <!-- R26 空 -->
   <tr class="h18"><td></td><td></td>
     <td class="bb bl br"></td><td class="bb bl br c"></td><td class="bb bl br c"></td>
     <td class="bb bl br c"></td><td colspan="2" class="bt bb bl br"></td>
   </tr>
-  <!-- R27 配件3 -->
   <tr class="h20"><td></td><td></td>
     <td class="yel bt bb bl br l" id="r27c"></td>
     <td class="yel bt bb bl br c" id="r27d"></td>
     <td class="yel bt bb bl br c" id="r27e"></td>
-    <td class="bt bb bl br c">組</td>
-    <td colspan="2" class="bt bb bl br"></td>
+    <td class="bt bb bl br c">組</td><td colspan="2" class="bt bb bl br"></td>
   </tr>
-  <!-- R28 料號 -->
   <tr class="h20"><td></td><td></td>
     <td class="yel bt bb bl br l" id="r28c"></td>
     <td class="bt bb bl br c"></td><td class="bt bb bl br c"></td>
     <td class="bt bb bl br c"></td><td colspan="2" class="bt bb bl br"></td>
   </tr>
-  <!-- R29~30 空 -->
   <tr class="h18"><td></td><td></td>
     <td class="bb bl br"></td><td class="bb bl br c"></td><td class="bb bl br c"></td>
     <td class="bb bl br c"></td><td colspan="2" class="bb bl br"></td>
@@ -261,79 +249,63 @@ table.form td{padding:2px 5px;vertical-align:middle;white-space:pre-wrap;word-br
     <td class="bt bb bl br"></td><td class="bt bb bl br c"></td><td class="bt bb bl br c"></td>
     <td class="bt bb bl br c"></td><td colspan="2" class="bt bb bl br"></td>
   </tr>
-  <!-- R31 搭贈 -->
   <tr class="h22"><td></td><td></td>
     <td colspan="6" class="bold btm bbm blm br c gray">搭　　　　　　　　　　　　贈</td>
   </tr>
-  <!-- R32 搭贈1 -->
   <tr class="h20"><td></td><td></td>
     <td class="yel bb bl br l" id="r32c"></td>
     <td class="yel bb bl br c" id="r32d"></td>
     <td class="yel bb bl br c" id="r32e"></td>
-    <td class="bb bl br c">組</td>
-    <td colspan="2" class="bb bl br"></td>
+    <td class="bb bl br c">組</td><td colspan="2" class="bb bl br"></td>
   </tr>
-  <!-- R33 料號 -->
   <tr class="h20"><td></td><td></td>
     <td class="yel bt bb bl br l" id="r33c"></td>
     <td class="bt bb bl br c"></td><td class="bt bb bl br c"></td>
     <td class="bt bb bl br c"></td><td colspan="2" class="bt bb bl br"></td>
   </tr>
-  <!-- R34 空 -->
   <tr class="h20"><td></td><td></td>
     <td class="bt bb bl br"></td><td class="bt bb bl br c"></td><td class="bt bb bl br c"></td>
     <td class="bt bb bl br c"></td><td colspan="2" class="bt bb bl br"></td>
   </tr>
-  <!-- R35 碳帶 -->
   <tr class="h20"><td></td><td></td>
     <td class="yel bt bb bl br l" id="r35c"></td>
     <td class="yel bb bl br c" id="r35d"></td>
     <td class="yel bb bl br c" id="r35e"></td>
-    <td class="bb bl br c">捲</td>
-    <td colspan="2" class="bb bl br"></td>
+    <td class="bb bl br c">捲</td><td colspan="2" class="bb bl br"></td>
   </tr>
-  <!-- R36 料號 -->
   <tr class="h20"><td></td><td></td>
     <td class="yel bt bb bl br l" id="r36c"></td>
     <td class="bt bb bl br c"></td><td class="bt bb bl br c"></td>
     <td class="bt bb bl br c"></td><td colspan="2" class="bt bb bl br"></td>
   </tr>
-  <!-- R37 支架 -->
   <tr class="h22"><td></td><td></td>
     <td colspan="6" class="bold btm bbm blm br c gray">支　　　　　　　　　　　　架</td>
   </tr>
-  <!-- R38 支架1 -->
   <tr class="h20"><td></td><td></td>
     <td class="yel bb bl br l" id="r38c"></td>
     <td class="yel bb bl br c" id="r38d"></td>
     <td class="yel bb bl br c" id="r38e"></td>
-    <td class="bb bl br c">套</td>
-    <td colspan="2" class="bb bl br"></td>
+    <td class="bb bl br c">套</td><td colspan="2" class="bb bl br"></td>
   </tr>
-  <!-- R39 料號 -->
   <tr class="h20"><td></td><td></td>
     <td class="yel bt bb bl br l" id="r39c"></td>
     <td class="bt bb bl br c"></td><td class="bt bb bl br c"></td>
     <td class="bt bb bl br c"></td><td colspan="2" class="bt bb bl br"></td>
   </tr>
-  <!-- R40 空 -->
   <tr class="h20"><td></td><td></td>
     <td class="bt bb bl br"></td><td class="bt bb bl br c"></td><td class="bt bb bl br c"></td>
     <td class="bt bb bl br c"></td><td colspan="2" class="bt bb bl br"></td>
   </tr>
-  <!-- R41 業務 -->
   <tr class="h20"><td></td><td></td>
     <td>業 務 主 管 ：</td><td></td>
     <td colspan="4" class="yel" id="r41e">業   務   員 ：</td>
   </tr>
   <tr class="h18"><td colspan="8"></td></tr>
-  <!-- R43 技術 -->
   <tr class="h20"><td></td><td></td>
     <td>技 術 主 管 ：</td><td></td>
     <td colspan="4" class="yel" id="r43e">技 術 人 員 ：</td>
   </tr>
   <tr class="h18"><td colspan="8"></td></tr>
-  <!-- R45 訂單 -->
   <tr class="h20"><td></td><td></td>
     <td class="yel" id="r45c">訂單編號：</td><td></td>
     <td colspan="4">倉　管　：</td>
@@ -342,24 +314,26 @@ table.form td{padding:2px 5px;vertical-align:middle;white-space:pre-wrap;word-br
 </table>
 </div>
 
+<!-- html2canvas + jsPDF 本地檔案 -->
+<script src="html2canvas.min.js"></script>
+<script src="jspdf.umd.min.js"></script>
 <script>
 const INV=[{"品名":"AN-011(R)黑 57*300 OUT","料號":"RRAN0116010005700300"},{"品名":"AN-011(R)黑 82*300 OUT","料號":"RRAN0116010008200300"},{"品名":"AN-210(R)黑 34*600 OUT","料號":"RRAN2106010003400600"},{"品名":"AN-510+ 黑 110*600 OUT","料號":"RSAN51P6010011000600"},{"品名":"AN-510+ 黑 34*50 OUT","料號":"RSAN51P6010003400050"},{"品名":"AN-510+ 黑 34*600 OUT","料號":"RSAN51P6010003400600"},{"品名":"AN-510+ 黑 55*600 OUT","料號":"RSAN51P6010005500600"},{"品名":"AN-510+ 黑 57*300 OUT","料號":"RSAN51P6010005700300"},{"品名":"AN-510+ 黑 82*300 OUT","料號":"RSAN51P6010008200300"},{"品名":"AR-710黑 82*300 OUT","料號":"RRAR7106010008200300"},{"品名":"AS-900黑 82*50 OUT","料號":"RSAS9006010008200050"},{"品名":"DN-320(R) 黑 34*600 OUT","料號":"RRDN3206010003400600"},{"品名":"DN-320(R) 黑 55*600 OUT","料號":"RRDN3206010005500600"},{"品名":"DN-320(R) 黑 57*300 OUT","料號":"RRDN3206010005700300"},{"品名":"DN-320(R) 黑 82*300 OUT","料號":"RRDN3206010008200300"},{"品名":"DN-320(R) 黑 110MM*280M IN 置中","料號":"RRDN3206M11011000280"},{"品名":"DN-421(R) 黑 55*600 OUT","料號":"RRDN4216010005500600"},{"品名":"DN-421(R) 黑 57*300 OUT","料號":"RRDN4216010005700300"},{"品名":"DN-421(R) 黑 82*300 OUT","料號":"RRDN4216010008200300"},{"品名":"DN-421(R) 黑 110*280 IN 置中","料號":"RRDN4216M11011000280"},{"品名":"DN-480(R) 黑 55*600 OUT","料號":"RRDN4806010005500600"},{"品名":"DN-561 (R) 白 55*600 OUT","料號":"RRDN5617010005500600"},{"品名":"DN-561 (R) 白 57*300 OUT","料號":"RRDN5617010005700300"},{"品名":"DN-561 (R) 黑 55*600 OUT","料號":"RRDN5616010005500600"},{"品名":"DN-561 (R) 黑 57*300 OUT","料號":"RRDN5616010005700300"},{"品名":"DN-561黑 110*280 IN 置中","料號":"RRDN5616M11011000280"},{"品名":"DN-707(R)黑 34*600 OUT","料號":"RRDN7A76010003400600"},{"品名":"DN-707(R)黑 57*300 OUT","料號":"RRDN7A76010005700300"},{"品名":"DN-707(R)黑 82*300 OUT","料號":"RRDN7A76010008200300"},{"品名":"DN-707(R)黑 110*600 OUT","料號":"RRDN7A76010011000600"},{"品名":"DN-808白 34*600 OUT","料號":"RSDN8087010003400600"},{"品名":"DN-808白 82*300 OUT","料號":"RSDN8087010008200300"},{"品名":"DN-808黑 34*600 OUT","料號":"RSDN8086010003400600"},{"品名":"DN-808黑 55*600 OUT","料號":"RSDN8086010005500600"},{"品名":"DN-808黑 82*300 OUT","料號":"RSDN8086010008200300"},{"品名":"EN-890 (R)黑 110*280 IN 置中","料號":"RREN8906M11011000280"},{"品名":"GN-314黑 34*600 OUT","料號":"RSGN3146010003400600"},{"品名":"GN-314黑 55*600 OUT","料號":"RSGN3146010005500600"},{"品名":"GN-331黑 34*600 OUT","料號":"RRGN3316010003400600"},{"品名":"GN-331黑 57*300 OUT","料號":"RRGN3316010005700300"},{"品名":"GN-331(R) 白 55MM*600M OUT","料號":"RRGN3317010005500600"},{"品名":"GN-331(R) 白 82MM*300M OUT","料號":"RRGN3317010008200300"},{"品名":"GN-512黑 34*600 OUT","料號":"RSGN5126010003400600"},{"品名":"GN-512黑 55*600 OUT","料號":"RSGN5126010005500600"},{"品名":"GN-811(R) 黑 110MM*280M IN 置中","料號":"RRGN8116M11011000280"},{"品名":"HL-35白 34*600 OUT","料號":"RRHL3507010003400600"},{"品名":"HL-35白 57*300 OUT","料號":"RRHL3507010005700300"},{"品名":"KN-830(R) 黑 34*600 OUT","料號":"RRKN8306010003400600"},{"品名":"KN-830(R) 黑 55*600 OUT","料號":"RRKN8306010005500600"},{"品名":"KN-830(R) 黑 57*300 OUT","料號":"RRKN8306010005700300"},{"品名":"KN-830(R) 黑 82*300 OUT","料號":"RRKN8306010008200300"},{"品名":"ON-222白 82MM*300M OUT","料號":"RSON2227010008200300"},{"品名":"ZR-810金 36*300 OUT","料號":"RRZR8101010003600300"},{"品名":"ZR-810金 82*300 OUT","料號":"RRZR8101010008200300"}];
 
 const t=new Date();
-// 日期顯示用
 const dateStr=t.getFullYear()+'.'+String(t.getMonth()+1).padStart(2,'0')+'.'+String(t.getDate()).padStart(2,'0');
 
 document.getElementById('partno').addEventListener('blur',function(){if(this.value)this.value=this.value.replace(/\D/g,'').padStart(4,'0');});
 document.getElementById('bracket').addEventListener('blur',function(){if(this.value)this.value=this.value.replace(/\D/g,'').padStart(4,'0');});
 
-function set(id,v){const el=document.getElementById(id);if(el&&v!==undefined&&v!==null&&v!=='')el.textContent=v;}
-
+function set(id,v){const el=document.getElementById(id);if(el&&v!=null&&v!=='')el.textContent=v;}
 function showMsg(txt,cls){const el=document.getElementById('msg');el.textContent=txt;el.className=cls;el.style.display=txt?'block':'none';}
+
+let pdfFilename='組合單.pdf';
 
 document.getElementById('btnGen').addEventListener('click',function(){
   const model=document.getElementById('model').value.trim();
   if(!model){showMsg('請先選擇機型','err');return;}
-
   const customer=document.getElementById('customer').value.trim();
   const partno=(document.getElementById('partno').value.trim()||'0000').padStart(4,'0');
   const ribbon=document.getElementById('ribbon').value.trim();
@@ -375,58 +349,62 @@ document.getElementById('btnGen').addEventListener('click',function(){
     '6330 2inch RH':['TTO 53MM VJ6330 RIGHT HAND','QQTTO53VJ6330RH00000'],
     '6530 LH':['TTO 53MM VJ6530 LEFT HAND','QQTTO53VJ6530LH00000'],
     '6530 RH':['TTO 53MM VJ6530 RIGHT HAND','QQTTO53VJ6530RH00000'],
-    'MP2':['OPS-MP 2" 手動機','QQAOPSMP200000000000'],
-    'MP3':['OPS-MP 3" 手動機','QQAOPSMP300000000000'],
-    'MP4':['OPS-MP 4" 手動機','QQAOPSMP400000000000'],
-    '610AP2':['OPS-MP 2" 手動機','QQAOPSMP200000000000'],
-    '610AP3':['OPS-MP 3" 手動機','QQAOPSMP300000000000'],
-    '610AP4':['OPS-MP4 " 手動機','QQAOPSMP400000000000'],
+    'MP2':['OPS-MP 2\" 手動機','QQAOPSMP200000000000'],
+    'MP3':['OPS-MP 3\" 手動機','QQAOPSMP300000000000'],
+    'MP4':['OPS-MP 4\" 手動機','QQAOPSMP400000000000'],
+    '610AP2':['OPS-MP 2\" 手動機','QQAOPSMP200000000000'],
+    '610AP3':['OPS-MP 3\" 手動機','QQAOPSMP300000000000'],
+    '610AP4':['OPS-MP4 \" 手動機','QQAOPSMP400000000000'],
   };
 
-  // 填日期、客戶
-  set('td-date', dateStr);
-  set('td-cust', '客戶名稱：'+(customer||''));
+  // 清空所有可填欄位
+  ['r8c','r8d','r8e','r9c','r14c','r14d','r14e','r15c',
+   'r21c','r21d','r21e','r22c','r24c','r24d','r24e','r25c',
+   'r27c','r27d','r27e','r28c','r32c','r32d','r32e','r33c',
+   'r35c','r35d','r35e','r36c','r38c','r38d','r38e','r39c',
+   'td-date','td-cust','r41e','r43e','r45c'
+  ].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=
+    id==='r41e'?'業   務   員 ：':id==='r43e'?'技 術 人 員 ：':id==='r45c'?'訂單編號：':id==='td-cust'?'客戶名稱：':'';
+  });
 
-  // 機器本體
+  set('td-date',dateStr);
+  set('td-cust','客戶名稱：'+(customer||''));
+
   if(MM[model]){
     const[c14,c15]=MM[model];
-    set('r8c', c14+(customer?' ('+customer+')':''));
-    set('r8d','TQ'); set('r8e','1');
-    set('r9c', c15.substring(0,16)+partno);
-    set('r14c', c14);
-    set('r14d','TA'); set('r14e','1');
-    set('r15c', c15);
+    set('r8c',c14+(customer?' ('+customer+')':''));
+    set('r8d','TQ');set('r8e','1');
+    set('r9c',c15.substring(0,16)+partno);
+    set('r14c',c14);set('r14d','TA');set('r14e','1');
+    set('r15c',c15);
   }
 
-  // 機器配件
   if(/6[35]30/.test(model)){
-    set('r21c','編碼器 KOYO TRD-2T3600BF'); set('r21d','TA'); set('r21e','1');
+    set('r21c','編碼器 KOYO TRD-2T3600BF');set('r21d','TA');set('r21e','1');
     set('r22c','QQENCODERKYO2T3600BF');
-    set('r24c','407968-06'); set('r24d','TA'); set('r24e','1');
+    set('r24c','407968-06');set('r24d','TA');set('r24e','1');
     set('r25c','QQTTOLANGUAGEVJ63530');
-    set('r27c','CLARiSUITE ADVANCED 軟體'); set('r27d','TA'); set('r27e','1');
+    set('r27c','CLARiSUITE ADVANCED 軟體');set('r27d','TA');set('r27e','1');
     set('r28c','QQTTOCLARISUITEADVAN');
   }
   if(/^MP[234]$/.test(model)){
-    set('r21c','編碼器 32/64 位元軟體USB KEY'); set('r21d','TA'); set('r21e','1');
+    set('r21c','編碼器 32/64 位元軟體USB KEY');set('r21d','TA');set('r21e','1');
     set('r22c','QQASOFTER32BITEUSB00');
-    set('r24c','手動機載物台'); set('r24d','TA'); set('r24e','1');
+    set('r24c','手動機載物台');set('r24d','TA');set('r24e','1');
     set('r25c','QQAAAOPSMPPANEL00000');
   }
   if(/^610AP[234]$/.test(model)){
-    set('r21c','編碼器 32/64 位元軟體USB KEY'); set('r21d','TA'); set('r21e','1');
+    set('r21c','編碼器 32/64 位元軟體USB KEY');set('r21d','TA');set('r21e','1');
     set('r22c','QQASOFTER32BITEUSB00');
-    set('r24c','幫浦220V (日本製) OFS-610 (EF500A)用'); set('r24d','TA'); set('r24e','1');
+    set('r24c','幫浦220V (日本製) OFS-610 (EF500A)用');set('r24d','TA');set('r24e','1');
     set('r25c','QQASPUMP220JAPAN0000');
-    set('r27c','OFS-610A (EF-500A半成品)'); set('r27d','TA'); set('r27e','1');
+    set('r27c','OFS-610A (EF-500A半成品)');set('r27d','TA');set('r27e','1');
     set('r28c','QQAOFS610ASEMI000000');
   }
 
-  // 搭贈 - 酒精筆固定
-  set('r32c','酒精筆'); set('r32d','TA'); set('r32e','1');
+  set('r32c','酒精筆');set('r32d','TA');set('r32e','1');
   set('r33c','QQTHERMALHEADCLEANER');
 
-  // 碳帶比對
   if(ribbon){
     const rc=ribbon.toUpperCase().replace(/[-_ ]/g,'');
     let sz='';
@@ -437,34 +415,68 @@ document.getElementById('btnGen').addEventListener('click',function(){
     else if(/MP4|AP4/.test(model))sz='110*280 IN 置中';
     if(sz){
       const hit=INV.find(i=>i['品名'].toUpperCase().replace(/[-_ (R)\s]/g,'').includes(rc)&&i['品名'].includes(sz));
-      if(hit){
-        set('r35c',hit['品名']); set('r35d','TA'); set('r35e','1');
-        set('r36c',hit['料號']);
-      } else {
-        set('r35c','⚠ 未找到：'+ribbon+' × '+sz);
-      }
+      if(hit){set('r35c',hit['品名']);set('r35d','TA');set('r35e','1');set('r36c',hit['料號']);}
+      else set('r35c','⚠ 未找到：'+ribbon+' × '+sz);
     }
   }
 
-  // 支架
   if(bracket){
     const bp=bracket.padStart(4,'0');
-    set('r38c','支架'+bp+(customer?' ('+customer+')':'')); set('r38d','TQ'); set('r38e','1');
+    set('r38c','支架'+bp+(customer?' ('+customer+')':''));
+    set('r38d','TQ');set('r38e','1');
     set('r39c',('QQTTT00000000000'+bp).substring(0,20));
   }
 
-  // 人員
-  if(sales) set('r41e','業   務   員 ：'+sales);
-  if(engineer) set('r43e','技 術 人 員 ：'+engineer);
-  if(orderno) set('r45c','訂單編號：'+orderno);
+  if(sales)set('r41e','業   務   員 ：'+sales);
+  if(engineer)set('r43e','技 術 人 員 ：'+engineer);
+  if(orderno)set('r45c','訂單編號：'+orderno);
 
-  // 顯示組合單
+  pdfFilename='組合單-'+model+(customer?'-'+customer:'')+'.pdf';
+
   document.getElementById('sheet').className='show';
-  document.getElementById('btnPrint').style.display='block';
-  // 設定列印標題（作為PDF檔名）
-  document.title='組合單-'+model+(customer?'-'+customer:'');
-  showMsg('✅ 組合單已生成！請按「列印 / 儲存為 PDF」','ok');
-  document.getElementById('sheet').scrollIntoView({behavior:'smooth'});
+  document.getElementById('btnPDF').style.display='block';
+  showMsg('✅ 組合單已生成，請按「下載 PDF」','ok');
+  document.getElementById('btnPDF').scrollIntoView({behavior:'smooth',block:'nearest'});
+});
+
+document.getElementById('btnPDF').addEventListener('click',async function(){
+  const btn=this;
+  btn.disabled=true;
+  btn.textContent='⏳ 產生中，請稍候…';
+  showMsg('正在產生 PDF，請稍候…','ing');
+  try{
+    const sheet=document.getElementById('sheet');
+    // 截圖前強制寬度794px，手機和電腦結果一致
+    const origStyle=sheet.getAttribute('style')||'';
+    sheet.style.cssText='display:block;width:794px;min-width:794px;max-width:794px;overflow:visible;margin:0;padding:0;background:#fff';
+    await new Promise(r=>setTimeout(r,200));
+    const canvas=await html2canvas(sheet,{
+      scale:2,
+      useCORS:true,
+      backgroundColor:'#ffffff',
+      logging:false,
+      windowWidth:900,
+      width:794,
+      scrollX:0,
+      scrollY:0,
+    });
+    sheet.setAttribute('style',origStyle);
+    const {jsPDF}=window.jspdf;
+    const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    const margin=8;
+    const imgW=210-margin*2;
+    const imgH=canvas.height*(imgW/canvas.width);
+    const finalH=Math.min(imgH,297-margin*2);
+    pdf.addImage(canvas.toDataURL('image/jpeg',0.92),'JPEG',margin,margin,imgW,finalH);
+    pdf.save(pdfFilename);
+    showMsg('✅ PDF 已下載：'+pdfFilename,'ok');
+  }catch(e){
+    showMsg('❌ 錯誤：'+e.message+' — 請確認 html2canvas.min.js 和 jspdf.umd.min.js 已上傳到 GitHub','err');
+    console.error(e);
+  }finally{
+    btn.disabled=false;
+    btn.textContent='⬇ 下載 PDF';
+  }
 });
 </script>
 </body>
