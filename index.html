@@ -23,7 +23,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#f0f0f0;
 hr{border:none;border-top:1px solid #ddd;margin:14px 0}
 .hint{font-size:12px;color:#888;text-align:center}
 .notice{background:#fff8e1;border:1px solid #ffc107;border-radius:8px;padding:10px 12px;font-size:12px;color:#7a5c00;margin-bottom:12px;line-height:1.6}
-.footer{text-align:center;font-size:11px;color:#bbb;padding:20px 0 10px;letter-spacing:.5px}
+.footer{text-align:center;font-size:13px;color:#aaa;padding:20px 0 10px;letter-spacing:.5px}
 
 @media print{
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
@@ -380,17 +380,28 @@ el('btnGen').addEventListener('click', function(){
   if(ribbon){
     var rc = ribbon.toUpperCase().replace(/[-_ ]/g,'');
     var sz = '';
-    if(/1inch/.test(model))       sz = '34*600 OUT';
+    if(/1inch/.test(model))           sz = '34*600 OUT';
     else if(/6530|2inch/.test(model)) sz = '55*600 OUT';
     else if(/MP2|AP2/.test(model))    sz = '57*300 OUT';
     else if(/MP3|AP3/.test(model))    sz = '82*300 OUT';
     else if(/MP4|AP4/.test(model))    sz = '110*280 IN 置中';
     if(sz){
+      // 碳帶顏色：有打白就找白，否則預設黑
+      var isWhite = /白|white/i.test(ribbon);
+      var colorKey = isWhite ? '白' : '黑';
       var hit = INV.find(function(i){
         return i['品名'].toUpperCase().replace(/[-_ (R)\s]/g,'').indexOf(rc) >= 0
-            && i['品名'].indexOf(sz) >= 0;
+            && i['品名'].indexOf(sz) >= 0
+            && i['品名'].indexOf(colorKey) >= 0;
       });
-      if(hit){ set('r35c',hit['品名']); set('r35d','TA'); set('r35e','1'); set('r36c',hit['料號']); }
+      // 若找不到，放寬顏色條件再找一次
+      if(!hit){
+        hit = INV.find(function(i){
+          return i['品名'].toUpperCase().replace(/[-_ (R)\s]/g,'').indexOf(rc) >= 0
+              && i['品名'].indexOf(sz) >= 0;
+        });
+      }
+      if(hit){ set('r35c',hit['品名']); set('r35d','TA'); set('r35e',String(ribbon_qty)); set('r36c',hit['料號']); }
       else    { set('r35c','未找到: ' + ribbon + ' x ' + sz); }
     }
   }
