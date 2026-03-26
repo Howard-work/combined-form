@@ -407,14 +407,14 @@ el('btnGen').addEventListener('click', function(){
       var isWhite = /白|white/i.test(ribbon);
       var colorKey = isWhite ? '白' : '黑';
       var hit = INV.find(function(i){
-        return i['品名'].toUpperCase().replace(/[-_ (R)\s]/g,'').indexOf(rc) >= 0
+        return i['品名'].toUpperCase().replace(/[-_ (R)+\s]/g,'').indexOf(rc) >= 0
             && i['品名'].indexOf(sz) >= 0
             && i['品名'].indexOf(colorKey) >= 0;
       });
       // 若找不到，放寬顏色條件再找一次
       if(!hit){
         hit = INV.find(function(i){
-          return i['品名'].toUpperCase().replace(/[-_ (R)\s]/g,'').indexOf(rc) >= 0
+          return i['品名'].toUpperCase().replace(/[-_ (R)+\s]/g,'').indexOf(rc) >= 0
               && i['品名'].indexOf(sz) >= 0;
         });
       }
