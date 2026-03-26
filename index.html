@@ -61,14 +61,7 @@ table.form td{padding:2px 5px;vertical-align:middle;word-break:break-all}
   <div class="g">
     <div class="f" style="grid-column:1/-1">
       <label>機型（必填）</label>
-      <select id="model">
-        <option value="">── 請選擇機型 ──</option>
-        <option>6330 1inch LH</option><option>6330 1inch RH</option>
-        <option>6330 2inch LH</option><option>6330 2inch RH</option>
-        <option>6530 LH</option><option>6530 RH</option>
-        <option>MP2</option><option>MP3</option><option>MP4</option>
-        <option>610AP2</option><option>610AP3</option><option>610AP4</option>
-      </select>
+      <select id="model"><option value="">── 載入中 ──</option></select>
     </div>
     <div class="f"><label>客戶名稱</label><input type="text" id="customer" placeholder="輸入客戶名稱" autocomplete="off"></div>
     <div class="f"><label>客戶品號（4位）</label><input type="text" id="partno" placeholder="不足自動補0" maxlength="4" inputmode="numeric"></div>
@@ -76,19 +69,10 @@ table.form td{padding:2px 5px;vertical-align:middle;word-break:break-all}
     <div class="f"><label>碳帶數量</label><input type="number" id="ribbon_qty" value="1" min="1" inputmode="numeric"></div>
     <div class="f"><label>支架號碼（選填4位）</label><input type="text" id="bracket" placeholder="不填則跳過" maxlength="4" inputmode="numeric"></div>
     <div class="f"><label>業務員</label>
-      <select id="sales">
-        <option value="">── 請選擇 ──</option>
-        <option>呂佳朋</option><option>朱祐慶</option><option>陳冠華</option>
-        <option>謝孟揚</option><option>包英傑</option><option>蘇士傑</option>
-      </select>
+      <select id="sales"><option value="">── 請選擇 ──</option></select>
     </div>
     <div class="f"><label>工程師</label>
-      <select id="engineer">
-        <option value="">── 請選擇 ──</option>
-        <option>陳威豪</option><option>翁靖其</option><option>蔡昀祐</option>
-        <option>王俊傑</option><option>張正泰</option><option>林炯岳</option>
-        <option>林頡銘</option><option>張崇維</option>
-      </select>
+      <select id="engineer"><option value="">── 請選擇 ──</option></select>
     </div>
     <div class="f" style="grid-column:1/-1"><label>訂單編號</label><input type="text" id="orderno" placeholder="訂單編號" autocomplete="off"></div>
   </div>
@@ -299,7 +283,60 @@ table.form td{padding:2px 5px;vertical-align:middle;word-break:break-all}
 <script>
 var MM = {"6330 1inch LH": ["TTO 32MM VJ6330 LEFT HAND", "QQTTO32VJ6330LH00000"], "6330 1inch RH": ["TTO 32MM VJ6330 RIGHT HAND", "QQTTO32VJ6330RH00000"], "6330 2inch LH": ["TTO 53MM VJ6330 LEFT HAND", "QQTTO53VJ6330LH00000"], "6330 2inch RH": ["TTO 53MM VJ6330 RIGHT HAND", "QQTTO53VJ6330RH00000"], "6530 LH": ["TTO 53MM VJ6530 LEFT HAND", "QQTTO53VJ6530LH00000"], "6530 RH": ["TTO 53MM VJ6530 RIGHT HAND", "QQTTO53VJ6530RH00000"], "MP2": ["OPS-MP 2吋 手動機", "QQAOPSMP200000000000"], "MP3": ["OPS-MP 3吋 手動機", "QQAOPSMP300000000000"], "MP4": ["OPS-MP 4吋 手動機", "QQAOPSMP400000000000"], "610AP2": ["OPS-MP 2吋 手動機", "QQAOPSMP200000000000"], "610AP3": ["OPS-MP 3吋 手動機", "QQAOPSMP300000000000"], "610AP4": ["OPS-MP4 吋 手動機", "QQAOPSMP400000000000"]};
 
-const INV=[{"品名":"AN-011(R)黑 57*300 OUT","料號":"RRAN0116010005700300"},{"品名":"AN-011(R)黑 82*300 OUT","料號":"RRAN0116010008200300"},{"品名":"AN-210(R)黑 34*600 OUT","料號":"RRAN2106010003400600"},{"品名":"AN-510+ 黑 110*600 OUT","料號":"RSAN51P6010011000600"},{"品名":"AN-510+ 黑 34*50 OUT","料號":"RSAN51P6010003400050"},{"品名":"AN-510+ 黑 34*600 OUT","料號":"RSAN51P6010003400600"},{"品名":"AN-510+ 黑 55*600 OUT","料號":"RSAN51P6010005500600"},{"品名":"AN-510+ 黑 57*300 OUT","料號":"RSAN51P6010005700300"},{"品名":"AN-510+ 黑 82*300 OUT","料號":"RSAN51P6010008200300"},{"品名":"AR-710黑 82*300 OUT","料號":"RRAR7106010008200300"},{"品名":"AS-900黑 82*50 OUT","料號":"RSAS9006010008200050"},{"品名":"DN-320(R) 黑 34*600 OUT","料號":"RRDN3206010003400600"},{"品名":"DN-320(R) 黑 55*600 OUT","料號":"RRDN3206010005500600"},{"品名":"DN-320(R) 黑 57*300 OUT","料號":"RRDN3206010005700300"},{"品名":"DN-320(R) 黑 82*300 OUT","料號":"RRDN3206010008200300"},{"品名":"DN-320(R) 黑 110MM*280M IN 置中","料號":"RRDN3206M11011000280"},{"品名":"DN-421(R) 黑 55*600 OUT","料號":"RRDN4216010005500600"},{"品名":"DN-421(R) 黑 57*300 OUT","料號":"RRDN4216010005700300"},{"品名":"DN-421(R) 黑 82*300 OUT","料號":"RRDN4216010008200300"},{"品名":"DN-421(R) 黑 110*280 IN 置中","料號":"RRDN4216M11011000280"},{"品名":"DN-480(R) 黑 55*600 OUT","料號":"RRDN4806010005500600"},{"品名":"DN-561 (R) 白 55*600 OUT","料號":"RRDN5617010005500600"},{"品名":"DN-561 (R) 白 57*300 OUT","料號":"RRDN5617010005700300"},{"品名":"DN-561 (R) 黑 55*600 OUT","料號":"RRDN5616010005500600"},{"品名":"DN-561 (R) 黑 57*300 OUT","料號":"RRDN5616010005700300"},{"品名":"DN-561黑 110*280 IN 置中","料號":"RRDN5616M11011000280"},{"品名":"DN-707(R)黑 34*600 OUT","料號":"RRDN7A76010003400600"},{"品名":"DN-707(R)黑 57*300 OUT","料號":"RRDN7A76010005700300"},{"品名":"DN-707(R)黑 82*300 OUT","料號":"RRDN7A76010008200300"},{"品名":"DN-707(R)黑 110*600 OUT","料號":"RRDN7A76010011000600"},{"品名":"DN-808白 34*600 OUT","料號":"RSDN8087010003400600"},{"品名":"DN-808白 82*300 OUT","料號":"RSDN8087010008200300"},{"品名":"DN-808黑 34*600 OUT","料號":"RSDN8086010003400600"},{"品名":"DN-808黑 55*600 OUT","料號":"RSDN8086010005500600"},{"品名":"DN-808黑 82*300 OUT","料號":"RSDN8086010008200300"},{"品名":"EN-890 (R)黑 110*280 IN 置中","料號":"RREN8906M11011000280"},{"品名":"GN-314黑 34*600 OUT","料號":"RSGN3146010003400600"},{"品名":"GN-314黑 55*600 OUT","料號":"RSGN3146010005500600"},{"品名":"GN-331黑 34*600 OUT","料號":"RRGN3316010003400600"},{"品名":"GN-331黑 57*300 OUT","料號":"RRGN3316010005700300"},{"品名":"GN-331(R) 白 55MM*600M OUT","料號":"RRGN3317010005500600"},{"品名":"GN-331(R) 白 82MM*300M OUT","料號":"RRGN3317010008200300"},{"品名":"GN-512黑 34*600 OUT","料號":"RSGN5126010003400600"},{"品名":"GN-512黑 55*600 OUT","料號":"RSGN5126010005500600"},{"品名":"GN-811(R) 黑 110MM*280M IN 置中","料號":"RRGN8116M11011000280"},{"品名":"HL-35白 34*600 OUT","料號":"RRHL3507010003400600"},{"品名":"HL-35白 57*300 OUT","料號":"RRHL3507010005700300"},{"品名":"KN-830(R) 黑 34*600 OUT","料號":"RRKN8306010003400600"},{"品名":"KN-830(R) 黑 55*600 OUT","料號":"RRKN8306010005500600"},{"品名":"KN-830(R) 黑 57*300 OUT","料號":"RRKN8306010005700300"},{"品名":"KN-830(R) 黑 82*300 OUT","料號":"RRKN8306010008200300"},{"品名":"ON-222白 82MM*300M OUT","料號":"RSON2227010008200300"},{"品名":"ZR-810金 36*300 OUT","料號":"RRZR8101010003600300"},{"品名":"ZR-810金 82*300 OUT","料號":"RRZR8101010008200300"}];
+var MM = {};
+var INV = [];
+
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwOsXVarWdGUyyFrsnPIktpjlh1NUgvBJkHSQq06POftnhvNDOcj71B0oUTWr4MXr8o/exec';
+
+async function loadAppSettings() {
+  try {
+    var r = await fetch(GAS_URL + '?action=getSettings');
+    var j = await r.json();
+
+    // 更新 MM
+    MM = {};
+    Object.keys(j.MM || {}).forEach(function(k) {
+      var m = j.MM[k];
+      MM[k] = [m.c14, m.c15, m.c21||'', m.c22||'', m.c24||'', m.c25||'', m.c27||'', m.c28||''];
+    });
+
+    // 更新機型下拉
+    var modelSel = el('model');
+    modelSel.innerHTML = '<option value="">── 請選擇機型 ──</option>';
+    Object.keys(MM).forEach(function(k) {
+      var opt = document.createElement('option');
+      opt.value = k; opt.textContent = k;
+      modelSel.appendChild(opt);
+    });
+
+    // 更新業務員下拉
+    var salesSel = el('sales');
+    salesSel.innerHTML = '<option value="">── 請選擇 ──</option>';
+    (j.sales || []).forEach(function(n) {
+      var opt = document.createElement('option');
+      opt.value = n; opt.textContent = n;
+      salesSel.appendChild(opt);
+    });
+
+    // 更新工程師下拉
+    var engSel = el('engineer');
+    engSel.innerHTML = '<option value="">── 請選擇 ──</option>';
+    (j.engineers || []).forEach(function(n) {
+      var opt = document.createElement('option');
+      opt.value = n; opt.textContent = n;
+      engSel.appendChild(opt);
+    });
+
+    // 更新 INV
+    INV = j.INV || [];
+
+  } catch(err) {
+    console.error('載入設定失敗:', err);
+    showMsg('⚠️ 設定載入失敗，請重新整理', 'err');
+  }
+}
+
+
 
 var t = new Date();
 var dateStr = t.getFullYear() + '.' + String(t.getMonth()+1).padStart(2,'0') + '.' + String(t.getDate()).padStart(2,'0');
@@ -340,7 +377,7 @@ el('btnGen').addEventListener('click', function(){
 
   var m = MM[model];
   if(m){
-    var c14 = m[0], c15 = m[1];
+    var c14=m[0],c15=m[1],c21=m[2],c22=m[3],c24=m[4],c25=m[5],c27=m[6],c28=m[7];
     set('r8c',  c14 + (customer ? ' (' + customer + ')' : ''));
     set('r8d',  'TQ');
     set('r8e',  '1');
@@ -351,28 +388,13 @@ el('btnGen').addEventListener('click', function(){
     set('r15c', c15);
   }
 
-  if(/6[35]30/.test(model)){
-    set('r21c','編碼器 KOYO TRD-2T3600BF'); set('r21d','TA'); set('r21e','1');
-    set('r22c','QQENCODERKYO2T3600BF');
-    set('r24c','407968-06'); set('r24d','TA'); set('r24e','1');
-    set('r25c','QQTTOLANGUAGEVJ63530');
-    set('r27c','CLARiSUITE ADVANCED 軟體'); set('r27d','TA'); set('r27e','1');
-    set('r28c','QQTTOCLARISUITEADVAN');
-  }
-  if(/^MP[234]$/.test(model)){
-    set('r21c','編碼器 32/64 位元軟體USB KEY'); set('r21d','TA'); set('r21e','1');
-    set('r22c','QQASOFTER32BITEUSB00');
-    set('r24c','手動機載物台'); set('r24d','TA'); set('r24e','1');
-    set('r25c','QQAAAOPSMPPANEL00000');
-  }
-  if(/^610AP[234]$/.test(model)){
-    set('r21c','編碼器 32/64 位元軟體USB KEY'); set('r21d','TA'); set('r21e','1');
-    set('r22c','QQASOFTER32BITEUSB00');
-    set('r24c','幫浦220V (日本製) OFS-610 (EF500A)用'); set('r24d','TA'); set('r24e','1');
-    set('r25c','QQASPUMP220JAPAN0000');
-    set('r27c','OFS-610A (EF-500A半成品)'); set('r27d','TA'); set('r27e','1');
-    set('r28c','QQAOFS610ASEMI000000');
-  }
+  // 配件從設定讀取
+  if(c21){ set('r21c',c21); set('r21d','TA'); set('r21e','1'); }
+  if(c22){ set('r22c',c22); }
+  if(c24){ set('r24c',c24); set('r24d','TA'); set('r24e','1'); }
+  if(c25){ set('r25c',c25); }
+  if(c27){ set('r27c',c27); set('r27d','TA'); set('r27e','1'); }
+  if(c28){ set('r28c',c28); }
 
   set('r32c','酒精筆'); set('r32d','TA'); set('r32e','1');
   set('r33c','QQTHERMALHEADCLEANER');
@@ -473,6 +495,8 @@ el('btnPDF').addEventListener('click', async function(){
     btn.textContent = '⬇ 下載 PDF';
   }
 });
+
+loadAppSettings();
 
 function goAdmin(){
   var pw = prompt('請輸入管理員密碼：');
