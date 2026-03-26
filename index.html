@@ -22,6 +22,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#f0f0f0;
 .err{background:#f8d7da;color:#721c24}
 hr{border:none;border-top:1px solid #ddd;margin:14px 0}
 .hint{font-size:12px;color:#888;text-align:center}
+.notice{background:#fff8e1;border:1px solid #ffc107;border-radius:8px;padding:10px 12px;font-size:12px;color:#7a5c00;margin-bottom:12px;line-height:1.6}
+.footer{text-align:center;font-size:11px;color:#bbb;padding:20px 0 10px;letter-spacing:.5px}
 
 @media print{
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
@@ -55,6 +57,7 @@ table.form td{padding:2px 5px;vertical-align:middle;word-break:break-all}
 <body>
 <div id="ui">
   <div class="t">📋 拓昶貿易 組合單生成器</div>
+  <div class="notice">⚠️ 本功能僅限產出制式組合單。特殊規格請循一般流程開單，並請先行確認即時庫存。</div>
   <div class="g">
     <div class="f" style="grid-column:1/-1">
       <label>機型（必填）</label>
@@ -70,9 +73,23 @@ table.form td{padding:2px 5px;vertical-align:middle;word-break:break-all}
     <div class="f"><label>客戶名稱</label><input type="text" id="customer" placeholder="輸入客戶名稱" autocomplete="off"></div>
     <div class="f"><label>客戶品號（4位）</label><input type="text" id="partno" placeholder="不足自動補0" maxlength="4" inputmode="numeric"></div>
     <div class="f"><label>碳帶型號</label><input type="text" id="ribbon" placeholder="例：AN510 或 DN421" autocomplete="off"></div>
+    <div class="f"><label>碳帶數量</label><input type="number" id="ribbon_qty" value="1" min="1" inputmode="numeric"></div>
     <div class="f"><label>支架號碼（選填4位）</label><input type="text" id="bracket" placeholder="不填則跳過" maxlength="4" inputmode="numeric"></div>
-    <div class="f"><label>業務員</label><input type="text" id="sales" placeholder="業務員姓名" autocomplete="off"></div>
-    <div class="f"><label>工程師</label><input type="text" id="engineer" placeholder="工程師姓名" autocomplete="off"></div>
+    <div class="f"><label>業務員</label>
+      <select id="sales">
+        <option value="">── 請選擇 ──</option>
+        <option>呂佳朋</option><option>朱祐慶</option><option>陳冠華</option>
+        <option>謝孟揚</option><option>包英傑</option><option>蘇士傑</option>
+      </select>
+    </div>
+    <div class="f"><label>工程師</label>
+      <select id="engineer">
+        <option value="">── 請選擇 ──</option>
+        <option>陳威豪</option><option>翁靖其</option><option>蔡昀祐</option>
+        <option>王俊傑</option><option>張正泰</option><option>林炯岳</option>
+        <option>林頡銘</option><option>張崇維</option>
+      </select>
+    </div>
     <div class="f" style="grid-column:1/-1"><label>訂單編號</label><input type="text" id="orderno" placeholder="訂單編號" autocomplete="off"></div>
   </div>
   <button class="btn-gen" id="btnGen">⚡ 生成組合單</button>
@@ -300,6 +317,7 @@ el('btnGen').addEventListener('click', function(){
   var customer = el('customer').value.trim();
   var partno   = (el('partno').value.trim() || '0000').padStart(4,'0');
   var ribbon   = el('ribbon').value.trim();
+  var ribbon_qty = parseInt(el('ribbon_qty').value) || 1;
   var bracket  = el('bracket').value.trim();
   var sales    = el('sales').value.trim();
   var engineer = el('engineer').value.trim();
@@ -405,6 +423,7 @@ el('btnPDF').addEventListener('click', async function(){
   var customer = el('customer').value.trim();
   var partno   = (el('partno').value.trim() || '0000').padStart(4,'0');
   var ribbon   = el('ribbon').value.trim();
+  var ribbon_qty = parseInt(el('ribbon_qty').value) || 1;
   var bracket  = el('bracket').value.trim();
   var sales    = el('sales').value.trim();
   var engineer = el('engineer').value.trim();
@@ -420,7 +439,7 @@ el('btnPDF').addEventListener('click', async function(){
       body: JSON.stringify({
         model: model, customer: customer, partno: partno,
         date: dateStr, ribbon: ribbon, bracket: bracket,
-        sales: sales, engineer: engineer, orderno: orderno
+        sales: sales, engineer: engineer, orderno: orderno, ribbon_qty: ribbon_qty
       })
     });
     if(!resp.ok) throw new Error('伺服器錯誤 ' + resp.status);
@@ -444,5 +463,6 @@ el('btnPDF').addEventListener('click', async function(){
   }
 });
 </script>
+  <div class="footer">Designed by Howard | 2026 rev.1</div>
 </body>
 </html>
