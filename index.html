@@ -297,7 +297,7 @@ async function loadAppSettings() {
     MM = {};
     Object.keys(j.MM || {}).forEach(function(k) {
       var m = j.MM[k];
-      MM[k] = [m.c14, m.c15, m.c21||'', m.c22||'', m.c24||'', m.c25||'', m.c27||'', m.c28||''];
+      MM[k] = [m.c14, m.c15, m.c21||'', m.c22||'', m.c24||'', m.c25||'', m.c27||'', m.c28||'', m.ribbonSz||''];
     });
 
     // 更新機型下拉
@@ -377,7 +377,7 @@ el('btnGen').addEventListener('click', function(){
 
   var m = MM[model];
   if(m){
-    var c14=m[0],c15=m[1],c21=m[2],c22=m[3],c24=m[4],c25=m[5],c27=m[6],c28=m[7];
+    var c14=m[0],c15=m[1],c21=m[2],c22=m[3],c24=m[4],c25=m[5],c27=m[6],c28=m[7],ribbonSz=m[8]||'';
     set('r8c',  c14 + (customer ? ' (' + customer + ')' : ''));
     set('r8d',  'TQ');
     set('r8e',  '1');
@@ -401,12 +401,7 @@ el('btnGen').addEventListener('click', function(){
 
   if(ribbon){
     var rc = ribbon.toUpperCase().replace(/[-_ ]/g,'');
-    var sz = '';
-    if(/1inch/.test(model))           sz = '34*600 OUT';
-    else if(/6530|2inch/.test(model)) sz = '55*600 OUT';
-    else if(/MP2|AP2/.test(model))    sz = '57*300 OUT';
-    else if(/MP3|AP3/.test(model))    sz = '82*300 OUT';
-    else if(/MP4|AP4/.test(model))    sz = '110*280 IN 置中';
+    var sz = ribbonSz || '';
     if(sz){
       // 碳帶顏色：有打白就找白，否則預設黑
       var isWhite = /白|white/i.test(ribbon);

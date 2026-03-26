@@ -129,6 +129,11 @@ function renderModels(){
         +'<div class="field"><label>C14 品名</label><input value="'+esc(r.c14)+'" onchange="modelData['+i+'].c14=this.value"></div>'
         +'<div class="field"><label>C15 品號</label><input value="'+esc(r.c15)+'" onchange="modelData['+i+'].c15=this.value"></div>'
       +'</div>'
+      +'<div class="section-sep">碳帶</div>'
+      +'<div class="grid2">'
+        +'<div class="field"><label>碳帶尺寸（用於比對庫存）</label><input value="'+esc(r.ribbonSz||'')+'" onchange="modelData['+i+'].ribbonSz=this.value" placeholder="例：55*600 OUT 或 82*300 OUT"></div>'
+        +'<div></div>'
+      +'</div>'
       +'<div class="section-sep">配件 1</div>'
       +'<div class="grid2">'
         +'<div class="field"><label>C21 品名</label><input value="'+esc(r.c21)+'" onchange="modelData['+i+'].c21=this.value"></div>'
@@ -213,7 +218,7 @@ async function loadSettings(){
     var j=await r.json();
     modelData=Object.keys(j.MM||{}).map(function(k){
       var m=j.MM[k];
-      return {model:k,c14:m.c14||'',c15:m.c15||'',c21:m.c21||'',c22:m.c22||'',c24:m.c24||'',c25:m.c25||'',c27:m.c27||'',c28:m.c28||''};
+      return {model:k,c14:m.c14||'',c15:m.c15||'',ribbonSz:m.ribbonSz||'',c21:m.c21||'',c22:m.c22||'',c24:m.c24||'',c25:m.c25||'',c27:m.c27||'',c28:m.c28||''};
     });
     salesData=j.sales||[];engData=j.engineers||[];invData=j.INV||[];
     renderModels();renderStaff();renderInv();
