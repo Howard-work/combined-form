@@ -221,7 +221,20 @@ async function loadSettings(){
   }catch(e){showMsg('❌ 載入失敗：'+e.message,'err');}
 }
 
-loadSettings();
+// 密碼驗證
+(function(){
+  var ok = sessionStorage.getItem('admin_auth');
+  if(ok !== '1'){
+    var pw = prompt('請輸入管理員密碼：');
+    if(pw === '198310'){
+      sessionStorage.setItem('admin_auth','1');
+    } else {
+      document.body.innerHTML = '<div style="text-align:center;padding:60px;font-size:16px;color:#999">密碼錯誤，請重新開啟頁面</div>';
+      return;
+    }
+  }
+  loadSettings();
+})();
 </script>
 </body>
 </html>
