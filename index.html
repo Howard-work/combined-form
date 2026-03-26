@@ -79,7 +79,7 @@ table.form td{padding:2px 5px;vertical-align:middle;word-break:break-all}
   <button class="btn-pdf" id="btnPDF">⬇ 下載 PDF</button>
   <div id="msg"></div>
   <hr>
-  <div class="hint">手機電腦皆可 · 首次點擊約需30秒（伺服器喚醒）· 之後正常速度</div>
+  <div class="hint">手機電腦皆可 · 一鍵下載 PDF</div>
 </div>
 
 <div id="sheet">
@@ -414,21 +414,25 @@ el('btnPDF').addEventListener('click', async function(){
   var dateStr = t.getFullYear() + '.' + String(t.getMonth()+1).padStart(2,'0') + '.' + String(t.getDate()).padStart(2,'0');
 
   try {
-    var resp = await fetch('https://combined-form-api.onrender.com/generate', {
+    var fname = '組合單-' + model + (customer ? '-' + customer : '') + '.pdf';
+    var resp = await fetch('https://script.google.com/macros/s/AKfycbwOsXVarWdGUyyFrsnPIktpjlh1NUgvBJkHSQq06POftnhvNDOcj71B0oUTWr4MXr8o/exec', {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
         model: model, customer: customer, partno: partno,
         date: dateStr, ribbon: ribbon, bracket: bracket,
-        sales: sales, engineer: engineer, orderno: orderno,
-        format: 'pdf'
+        sales: sales, engineer: engineer, orderno: orderno
       })
     });
     if(!resp.ok) throw new Error('伺服器錯誤 ' + resp.status);
-    var blob = await resp.blob();
+    var result = await resp.json();
+    if(result.error) throw new Error(result.error);
+    // 把 base64 PDF 轉成下載
+    var binary = atob(result.pdf);
+    var bytes = new Uint8Array(binary.length);
+    for(var i=0; i<binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    var blob = new Blob([bytes], {type: 'application/pdf'});
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
-    var fname = '組合單-' + model + (customer ? '-' + customer : '') + '.pdf';
     a.href = url; a.download = fname; a.click();
     URL.revokeObjectURL(url);
     showMsg('✅ PDF 已下載：' + fname, 'ok');
