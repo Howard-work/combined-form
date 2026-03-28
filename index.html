@@ -496,6 +496,7 @@ loadAppSettings();
 function goAdmin(){
   var pw = prompt('請輸入管理員密碼：');
   if(pw === '198310'){
+    sessionStorage.setItem('admin_pw', pw);
     window.location.href = 'admin.html';
   } else if(pw !== null){
     alert('密碼錯誤');

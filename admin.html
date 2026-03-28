@@ -165,7 +165,7 @@ function delModel(i){if(confirm('確定刪除此機型？')){modelData.splice(i,
 async function saveModels(){
   showMsg('儲存中…','ing');
   try{
-    var r=await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'saveSettings',MM:modelData})});
+    var r=await fetch(GAS_URL,{method:'POST',body:JSON.stringify({password: sessionStorage.getItem('admin_pw')||'', action:'saveSettings',MM:modelData})});
     var j=await r.json();
     if(j.ok) showMsg('✅ 機型設定已儲存','ok'); else throw new Error(j.error);
   }catch(e){showMsg('❌ '+e.message,'err');}
@@ -183,7 +183,7 @@ function delPerson(t,i){if(t==='sales')salesData.splice(i,1);else engData.splice
 async function saveStaff(){
   showMsg('儲存中…','ing');
   try{
-    var r=await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'saveSettings',staff:{sales:salesData.filter(Boolean),engineers:engData.filter(Boolean)}})});
+    var r=await fetch(GAS_URL,{method:'POST',body:JSON.stringify({password: sessionStorage.getItem('admin_pw')||'', action:'saveSettings',staff:{sales:salesData.filter(Boolean),engineers:engData.filter(Boolean)}})});
     var j=await r.json();
     if(j.ok) showMsg('✅ 人員名單已儲存','ok'); else throw new Error(j.error);
   }catch(e){showMsg('❌ '+e.message,'err');}
@@ -204,7 +204,7 @@ function delInv(i){invData.splice(i,1);renderInv();}
 async function saveInv(){
   showMsg('儲存中…','ing');
   try{
-    var r=await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'saveSettings',INV:invData})});
+    var r=await fetch(GAS_URL,{method:'POST',body:JSON.stringify({password: sessionStorage.getItem('admin_pw')||'', action:'saveSettings',INV:invData})});
     var j=await r.json();
     if(j.ok) showMsg('✅ 碳帶庫存已儲存','ok'); else throw new Error(j.error);
   }catch(e){showMsg('❌ '+e.message,'err');}
@@ -226,7 +226,12 @@ async function loadSettings(){
   }catch(e){showMsg('❌ 載入失敗：'+e.message,'err');}
 }
 
-loadSettings();
+// 確認是從主頁帶密碼進來的
+if (!sessionStorage.getItem('admin_pw')) {
+  document.body.innerHTML = '<div style="text-align:center;padding:60px;font-size:16px;color:#999">請從主頁面進入管理後台</div>';
+} else {
+  loadSettings();
+}
 </script>
 </body>
 </html>
