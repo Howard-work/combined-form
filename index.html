@@ -464,7 +464,6 @@ el('btnPDF').addEventListener('click', async function(){
     var fname = '組合單-' + model + (customer ? '-' + customer : '') + '-' + dateStr + '.pdf';
     var resp = await fetch('https://script.google.com/macros/s/AKfycbwOsXVarWdGUyyFrsnPIktpjlh1NUgvBJkHSQq06POftnhvNDOcj71B0oUTWr4MXr8o/exec', {
       method: 'POST',
-
       body: JSON.stringify({
         model: model, customer: customer, partno: partno,
         date: dateStr, ribbon: ribbon, bracket: bracket,

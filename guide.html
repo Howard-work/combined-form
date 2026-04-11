@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>組合單生成器 使用說明</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  font-family:'Noto Sans TC',sans-serif;
+  background:#f7f6f3;
+  color:#1a1a1a;
+  min-height:100vh;
+  padding:40px 20px 60px;
+}
+
+.page{
+  max-width:680px;
+  margin:0 auto;
+}
+
+/* Header */
+.header{
+  margin-bottom:40px;
+  padding-bottom:24px;
+  border-bottom:2px solid #1a1a1a;
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:16px;
+}
+.header-left h1{
+  font-size:26px;
+  font-weight:700;
+  letter-spacing:-0.5px;
+  line-height:1.2;
+}
+.header-left p{
+  font-size:13px;
+  color:#888;
+  margin-top:6px;
+  font-weight:300;
+}
+.header-badge{
+  background:#1a1a1a;
+  color:#fff;
+  font-size:11px;
+  font-weight:500;
+  padding:5px 12px;
+  border-radius:20px;
+  white-space:nowrap;
+  letter-spacing:.5px;
+}
+
+/* Notice */
+.notice{
+  background:#fffbe6;
+  border:1px solid #ffe066;
+  border-radius:10px;
+  padding:12px 16px;
+  font-size:13px;
+  color:#7a5c00;
+  margin-bottom:32px;
+  line-height:1.7;
+}
+
+/* Steps */
+.steps{
+  display:flex;
+  flex-direction:column;
+  gap:0;
+}
+
+.step{
+  display:flex;
+  gap:20px;
+  position:relative;
+}
+
+.step:not(:last-child)::after{
+  content:'';
+  position:absolute;
+  left:19px;
+  top:44px;
+  bottom:0;
+  width:2px;
+  background:#e0e0e0;
+}
+
+.step-num{
+  width:40px;
+  height:40px;
+  min-width:40px;
+  background:#1a1a1a;
+  color:#fff;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:15px;
+  font-weight:700;
+  position:relative;
+  z-index:1;
+}
+
+.step-body{
+  padding:8px 0 32px;
+  flex:1;
+}
+
+.step-body h2{
+  font-size:16px;
+  font-weight:700;
+  margin-bottom:8px;
+  letter-spacing:-0.2px;
+}
+
+.step-body p{
+  font-size:14px;
+  color:#555;
+  line-height:1.8;
+}
+
+.step-body .fields{
+  margin-top:12px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.field-row{
+  display:flex;
+  align-items:baseline;
+  gap:10px;
+  font-size:13.5px;
+}
+
+.field-name{
+  font-weight:600;
+  color:#1a1a1a;
+  min-width:100px;
+  white-space:nowrap;
+}
+
+.field-desc{
+  color:#666;
+  line-height:1.6;
+}
+
+.tag{
+  display:inline-block;
+  background:#f0f0f0;
+  color:#555;
+  font-size:11px;
+  padding:2px 7px;
+  border-radius:4px;
+  margin-left:4px;
+  font-weight:500;
+}
+
+.tag.req{
+  background:#fff0f0;
+  color:#c0392b;
+}
+
+.tag.opt{
+  background:#f0f7ff;
+  color:#2471a3;
+}
+
+/* Tips */
+.tips{
+  margin-top:40px;
+  padding:20px 24px;
+  background:#fff;
+  border:1px solid #e8e8e8;
+  border-radius:12px;
+}
+
+.tips h3{
+  font-size:14px;
+  font-weight:700;
+  margin-bottom:14px;
+  color:#1a1a1a;
+  letter-spacing:.3px;
+}
+
+.tip-item{
+  display:flex;
+  gap:10px;
+  font-size:13px;
+  color:#555;
+  line-height:1.7;
+  margin-bottom:8px;
+}
+
+.tip-item:last-child{margin-bottom:0}
+
+.tip-dot{
+  width:6px;
+  height:6px;
+  min-width:6px;
+  background:#1a1a1a;
+  border-radius:50%;
+  margin-top:8px;
+}
+
+/* Footer */
+.footer{
+  margin-top:40px;
+  padding-top:20px;
+  border-top:1px solid #e0e0e0;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:12px;
+  color:#aaa;
+}
+
+.url-link{
+  font-size:12px;
+  color:#0071e3;
+  text-decoration:none;
+  font-weight:500;
+}
+
+@media(max-width:480px){
+  .header{flex-direction:column;align-items:flex-start}
+  .field-row{flex-direction:column;gap:2px}
+  .field-name{min-width:auto}
+}
+
+@media print{
+  body{background:#fff;padding:20px}
+  .footer a{color:#000}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="header-left">
+      <h1>組合單生成器<br>使用說明</h1>
+      <p>拓昶貿易股份有限公司 · 合昌金箔</p>
+    </div>
+    <div class="header-badge">rev.1 · 2026</div>
+  </div>
+
+  <div class="notice">
+    ⚠️ 本功能僅限產出制式組合單。特殊規格請循一般流程開單，並請先行確認即時庫存。
+  </div>
+
+  <div class="steps">
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h2>開啟生成器頁面</h2>
+        <p>用手機或電腦瀏覽器開啟以下網址：</p>
+        <p style="margin-top:8px">
+          <a class="url-link" href="https://howard-work.github.io/combined-form/" target="_blank">
+            howard-work.github.io/combined-form
+          </a>
+        </p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h2>填寫各欄位資料</h2>
+        <p>依序填入以下資訊：</p>
+        <div class="fields">
+          <div class="field-row">
+            <span class="field-name">機型<span class="tag req">必填</span></span>
+            <span class="field-desc">從下拉選單選擇對應機型</span>
+          </div>
+          <div class="field-row">
+            <span class="field-name">客戶名稱</span>
+            <span class="field-desc">輸入客戶名稱，會帶入組合單抬頭</span>
+          </div>
+          <div class="field-row">
+            <span class="field-name">客戶品號</span>
+            <span class="field-desc">4位數字，不足自動補0</span>
+          </div>
+          <div class="field-row">
+            <span class="field-name">碳帶型號</span>
+            <span class="field-desc">輸入型號（如 DN808），系統自動比對規格與料號</span>
+          </div>
+          <div class="field-row">
+            <span class="field-name">碳帶數量</span>
+            <span class="field-desc">預設為 1，可自行修改</span>
+          </div>
+          <div class="field-row">
+            <span class="field-name">支架號碼<span class="tag opt">選填</span></span>
+            <span class="field-desc">4位數字，不填則跳過</span>
+          </div>
+          <div class="field-row">
+            <span class="field-name">業務員</span>
+            <span class="field-desc">從下拉選單選擇負責業務員</span>
+          </div>
+          <div class="field-row">
+            <span class="field-name">工程師</span>
+            <span class="field-desc">從下拉選單選擇負責工程師</span>
+          </div>
+          <div class="field-row">
+            <span class="field-name">訂單編號</span>
+            <span class="field-desc">輸入本次訂單編號</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h2>生成組合單</h2>
+        <p>確認資料無誤後，按下藍色「⚡ 生成組合單」按鈕，頁面下方會顯示預覽。</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h2>下載 PDF</h2>
+        <p>按下綠色「⬇ 下載 PDF」按鈕，稍候幾秒即可下載。<br>
+        PDF 同步自動備份至公司 Google Drive。</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="tips">
+    <h3>注意事項</h3>
+    <div class="tip-item"><div class="tip-dot"></div><span>碳帶型號為模糊比對，輸入 DN808 即可找到 DN-808 系列；若找不到會顯示提示，請確認型號是否正確。</span></div>
+    <div class="tip-item"><div class="tip-dot"></div><span>碳帶沒有特別指定顏色時，系統預設比對黑色；如需白色請在型號中加入「白」字。</span></div>
+    <div class="tip-item"><div class="tip-dot"></div><span>首次使用當天下載可能需要稍等 30 秒，系統喚醒後即恢復正常速度。</span></div>
+    <div class="tip-item"><div class="tip-dot"></div><span>特殊規格或非制式組合請循一般流程開單，請勿用本系統產出。</span></div>
+  </div>
+
+  <div class="footer">
+    <span>Designed by Howard | 2026 rev.1</span>
+    <a class="url-link" href="https://howard-work.github.io/combined-form/" target="_blank">前往生成器 →</a>
+  </div>
+
+</div>
+</body>
+</html>

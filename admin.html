@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>組合單 管理後台</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#f0f0f0;padding-bottom:60px}
+header{background:#1d1d1f;color:#fff;padding:16px 20px;display:flex;align-items:center;justify-content:space-between}
+header .header-left h1{font-size:17px;font-weight:700}
+header .header-left p{font-size:12px;color:#999;margin-top:2px}
+.btn-back{padding:7px 14px;border:1px solid #555;border-radius:8px;background:none;color:#ccc;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
+.btn-back:hover{background:#333;color:#fff}
+.tabs{display:flex;background:#fff;border-bottom:2px solid #e0e0e0;padding:0 16px;overflow-x:auto}
+.tab{padding:12px 20px;font-size:14px;font-weight:600;color:#888;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap}
+.tab.active{color:#0071e3;border-bottom-color:#0071e3}
+.panel{display:none;padding:16px;max-width:1000px;margin:0 auto}
+.panel.active{display:block}
+.card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.1);margin-bottom:16px}
+.card-title{padding:12px 16px;background:#f8f8f8;border-bottom:1px solid #eee;font-size:13px;font-weight:700;color:#333;display:flex;justify-content:space-between;align-items:center}
+.model-block{border:1px solid #e0e0e0;border-radius:10px;margin:12px;padding:14px;background:#fff;position:relative}
+.model-block:hover{border-color:#0071e3}
+.model-label{font-size:13px;font-weight:700;color:#333;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grid1{display:grid;grid-template-columns:1fr;gap:8px}
+.field{display:flex;flex-direction:column;gap:3px}
+.field label{font-size:11px;font-weight:700;color:#888}
+.field input{padding:7px 10px;border:1px solid #ddd;border-radius:7px;font-size:13px;font-family:inherit}
+.field input:focus{border-color:#0071e3;outline:none}
+.section-sep{font-size:11px;font-weight:700;color:#aaa;margin:8px 0 4px;text-transform:uppercase;letter-spacing:.5px}
+.btn-add{padding:6px 14px;border:none;border-radius:8px;background:#0071e3;color:#fff;font-size:13px;font-weight:600;cursor:pointer}
+.btn-del{position:absolute;top:10px;right:10px;width:26px;height:26px;border:none;border-radius:6px;background:#ff3b30;color:#fff;font-size:13px;cursor:pointer}
+.btn-save{width:100%;padding:13px;border:none;border-radius:10px;background:#28a745;color:#fff;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px}
+.btn-save:active{background:#1e7e34}
+table{width:100%;border-collapse:collapse}
+th{background:#f5f5f5;padding:8px 12px;text-align:left;font-size:12px;font-weight:700;color:#555;border-bottom:1px solid #e0e0e0}
+td{padding:6px 10px;border-bottom:1px solid #f0f0f0;font-size:13px;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+td input{width:100%;padding:5px 8px;border:1px solid #ddd;border-radius:6px;font-size:12px;font-family:inherit}
+td input:focus{border-color:#0071e3;outline:none}
+.btn-tdel{width:26px;height:26px;border:none;border-radius:5px;background:#ff3b30;color:#fff;font-size:12px;cursor:pointer}
+#msg{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);padding:10px 24px;border-radius:20px;font-size:13px;font-weight:700;display:none;z-index:999;white-space:nowrap}
+.ok{background:#28a745;color:#fff}.err{background:#dc3545;color:#fff}.ing{background:#0071e3;color:#fff}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-left">
+    <h1>⚙️ 組合單 管理後台</h1>
+    <p>變更後按「儲存」即時更新系統</p>
+  </div>
+  <button class="btn-back" onclick="window.location.href='index.html'">← 回首頁</button>
+</header>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('model')">機型設定</div>
+  <div class="tab" onclick="switchTab('staff')">人員名單</div>
+  <div class="tab" onclick="switchTab('inv')">碳帶庫存</div>
+</div>
+
+<!-- 機型設定 -->
+<div class="panel active" id="panel-model">
+  <div class="card">
+    <div class="card-title">
+      <span>機型列表</span>
+      <button class="btn-add" onclick="addModel()">＋ 新增機型</button>
+    </div>
+    <div id="model-list"></div>
+  </div>
+  <button class="btn-save" onclick="saveModels()">💾 儲存機型設定</button>
+</div>
+
+<!-- 人員名單 -->
+<div class="panel" id="panel-staff">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div class="card">
+      <div class="card-title">
+        <span>業務員</span>
+        <button class="btn-add" onclick="addPerson('sales')">＋</button>
+      </div>
+      <table><tbody id="sales-tbody"></tbody></table>
+    </div>
+    <div class="card">
+      <div class="card-title">
+        <span>工程師</span>
+        <button class="btn-add" onclick="addPerson('eng')">＋</button>
+      </div>
+      <table><tbody id="eng-tbody"></tbody></table>
+    </div>
+  </div>
+  <button class="btn-save" onclick="saveStaff()">💾 儲存人員名單</button>
+</div>
+
+<!-- 碳帶庫存 -->
+<div class="panel" id="panel-inv">
+  <div class="card">
+    <div class="card-title">
+      <span>碳帶庫存（共 <span id="inv-count">0</span> 筆）</span>
+      <button class="btn-add" onclick="addInv()">＋ 新增</button>
+    </div>
+    <table>
+      <thead><tr><th>品名</th><th>料號</th><th></th></tr></thead>
+      <tbody id="inv-tbody"></tbody>
+    </table>
+  </div>
+  <button class="btn-save" onclick="saveInv()">💾 儲存碳帶庫存</button>
+</div>
+
+<div id="msg"></div>
+
+<script>
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwOsXVarWdGUyyFrsnPIktpjlh1NUgvBJkHSQq06POftnhvNDOcj71B0oUTWr4MXr8o/exec';
+
+var modelData = [], salesData = [], engData = [], invData = [];
+
+function showMsg(t,c){var e=document.getElementById('msg');e.textContent=t;e.className=c;e.style.display='block';if(c!=='ing')setTimeout(function(){e.style.display='none';},3000);}
+function switchTab(n){document.querySelectorAll('.tab').forEach(function(t,i){t.classList.toggle('active',['model','staff','inv'][i]===n);});document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('active',p.id==='panel-'+n);});}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
+
+// ── 機型 ──
+function renderModels(){
+  var html = '';
+  modelData.forEach(function(r,i){
+    html += '<div class="model-block">'
+      +'<button class="btn-del" onclick="delModel('+i+')">✕</button>'
+      +'<div class="model-label">機型 '+(i+1)+'</div>'
+      +'<div class="grid2">'
+        +'<div class="field"><label>機型名稱</label><input value="'+esc(r.model)+'" onchange="modelData['+i+'].model=this.value" placeholder="例：6330 1inch LH"></div>'
+        +'<div></div>'
+      +'</div>'
+      +'<div class="section-sep">機器本體</div>'
+      +'<div class="grid2">'
+        +'<div class="field"><label>C14 品名</label><input value="'+esc(r.c14)+'" onchange="modelData['+i+'].c14=this.value"></div>'
+        +'<div class="field"><label>C15 品號</label><input value="'+esc(r.c15)+'" onchange="modelData['+i+'].c15=this.value"></div>'
+      +'</div>'
+      +'<div class="section-sep">碳帶</div>'
+      +'<div class="grid2">'
+        +'<div class="field"><label>碳帶尺寸（用於比對庫存）</label><input value="'+esc(r.ribbonSz||'')+'" onchange="modelData['+i+'].ribbonSz=this.value" placeholder="例：55*600 OUT 或 82*300 OUT"></div>'
+        +'<div></div>'
+      +'</div>'
+      +'<div class="section-sep">配件 1</div>'
+      +'<div class="grid2">'
+        +'<div class="field"><label>C21 品名</label><input value="'+esc(r.c21)+'" onchange="modelData['+i+'].c21=this.value"></div>'
+        +'<div class="field"><label>C22 品號</label><input value="'+esc(r.c22)+'" onchange="modelData['+i+'].c22=this.value"></div>'
+      +'</div>'
+      +'<div class="section-sep">配件 2</div>'
+      +'<div class="grid2">'
+        +'<div class="field"><label>C24 品名</label><input value="'+esc(r.c24)+'" onchange="modelData['+i+'].c24=this.value"></div>'
+        +'<div class="field"><label>C25 品號</label><input value="'+esc(r.c25)+'" onchange="modelData['+i+'].c25=this.value"></div>'
+      +'</div>'
+      +'<div class="section-sep">配件 3</div>'
+      +'<div class="grid2">'
+        +'<div class="field"><label>C27 品名</label><input value="'+esc(r.c27)+'" onchange="modelData['+i+'].c27=this.value"></div>'
+        +'<div class="field"><label>C28 品號</label><input value="'+esc(r.c28)+'" onchange="modelData['+i+'].c28=this.value"></div>'
+      +'</div>'
+      +'</div>';
+  });
+  document.getElementById('model-list').innerHTML = html || '<div style="padding:20px;color:#aaa;text-align:center">尚無機型，請點＋新增</div>';
+}
+
+function addModel(){
+  modelData.push({model:'',c14:'',c15:'',c21:'',c22:'',c24:'',c25:'',c27:'',c28:''});
+  renderModels();
+  document.getElementById('model-list').lastElementChild.scrollIntoView({behavior:'smooth'});
+}
+
+function delModel(i){if(confirm('確定刪除此機型？')){modelData.splice(i,1);renderModels();}}
+
+async function saveModels(){
+  showMsg('儲存中…','ing');
+  try{
+    var r=await fetch(GAS_URL,{method:'POST',body:JSON.stringify({password: sessionStorage.getItem('admin_pw')||'', action:'saveSettings',MM:modelData})});
+    var j=await r.json();
+    if(j.ok) showMsg('✅ 機型設定已儲存','ok'); else throw new Error(j.error);
+  }catch(e){showMsg('❌ '+e.message,'err');}
+}
+
+// ── 人員 ──
+function renderStaff(){
+  var st=document.getElementById('sales-tbody');
+  st.innerHTML=salesData.map(function(n,i){return '<tr><td><input value="'+esc(n)+'" onchange="salesData['+i+']=this.value"></td><td style="width:36px"><button class="btn-tdel" onclick="delPerson(\'sales\','+i+')">✕</button></td></tr>';}).join('');
+  var et=document.getElementById('eng-tbody');
+  et.innerHTML=engData.map(function(n,i){return '<tr><td><input value="'+esc(n)+'" onchange="engData['+i+']=this.value"></td><td style="width:36px"><button class="btn-tdel" onclick="delPerson(\'eng\','+i+')">✕</button></td></tr>';}).join('');
+}
+function addPerson(t){if(t==='sales')salesData.push('');else engData.push('');renderStaff();}
+function delPerson(t,i){if(t==='sales')salesData.splice(i,1);else engData.splice(i,1);renderStaff();}
+async function saveStaff(){
+  showMsg('儲存中…','ing');
+  try{
+    var r=await fetch(GAS_URL,{method:'POST',body:JSON.stringify({password: sessionStorage.getItem('admin_pw')||'', action:'saveSettings',staff:{sales:salesData.filter(Boolean),engineers:engData.filter(Boolean)}})});
+    var j=await r.json();
+    if(j.ok) showMsg('✅ 人員名單已儲存','ok'); else throw new Error(j.error);
+  }catch(e){showMsg('❌ '+e.message,'err');}
+}
+
+// ── 碳帶 ──
+function renderInv(){
+  document.getElementById('inv-count').textContent=invData.length;
+  var tb=document.getElementById('inv-tbody');
+  tb.innerHTML=invData.map(function(r,i){
+    return '<tr><td><input value="'+esc(r['品名'])+'" onchange="invData['+i+'][\'品名\']=this.value"></td>'
+      +'<td><input value="'+esc(r['料號'])+'" onchange="invData['+i+'][\'料號\']=this.value"></td>'
+      +'<td style="width:36px"><button class="btn-tdel" onclick="delInv('+i+')">✕</button></td></tr>';
+  }).join('');
+}
+function addInv(){invData.push({'品名':'','料號':''});renderInv();document.getElementById('inv-tbody').lastElementChild.scrollIntoView({behavior:'smooth'});}
+function delInv(i){invData.splice(i,1);renderInv();}
+async function saveInv(){
+  showMsg('儲存中…','ing');
+  try{
+    var r=await fetch(GAS_URL,{method:'POST',body:JSON.stringify({password: sessionStorage.getItem('admin_pw')||'', action:'saveSettings',INV:invData})});
+    var j=await r.json();
+    if(j.ok) showMsg('✅ 碳帶庫存已儲存','ok'); else throw new Error(j.error);
+  }catch(e){showMsg('❌ '+e.message,'err');}
+}
+
+// ── 載入 ──
+async function loadSettings(){
+  showMsg('載入中…','ing');
+  try{
+    var r=await fetch(GAS_URL+'?action=getSettings');
+    var j=await r.json();
+    modelData=Object.keys(j.MM||{}).map(function(k){
+      var m=j.MM[k];
+      return {model:k,c14:m.c14||'',c15:m.c15||'',ribbonSz:m.ribbonSz||'',c21:m.c21||'',c22:m.c22||'',c24:m.c24||'',c25:m.c25||'',c27:m.c27||'',c28:m.c28||''};
+    });
+    salesData=j.sales||[];engData=j.engineers||[];invData=j.INV||[];
+    renderModels();renderStaff();renderInv();
+    document.getElementById('msg').style.display='none';
+  }catch(e){showMsg('❌ 載入失敗：'+e.message,'err');}
+}
+
+// 確認是從主頁帶密碼進來的
+if (!sessionStorage.getItem('admin_pw')) {
+  document.body.innerHTML = '<div style="text-align:center;padding:60px;font-size:16px;color:#999">請從主頁面進入管理後台</div>';
+} else {
+  loadSettings();
+}
+</script>
+</body>
+</html>
