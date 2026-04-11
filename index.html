@@ -480,9 +480,10 @@ el('btnPDF').addEventListener('click', async function(){
     var blob = new Blob([bytes], {type: 'application/pdf'});
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
-    a.href = url; a.download = fname; a.click();
+    var downloadName = result.filename || fname;
+    a.href = url; a.download = downloadName; a.click();
     URL.revokeObjectURL(url);
-    showMsg('✅ PDF 已下載：' + fname, 'ok');
+    showMsg('✅ PDF 已下載：' + downloadName, 'ok');
   } catch(e) {
     showMsg('❌ 錯誤：' + e.message, 'err');
   } finally {
