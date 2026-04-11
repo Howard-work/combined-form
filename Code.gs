@@ -309,7 +309,7 @@ function generatePDF(d) {
     var resp = UrlFetchApp.fetch(url, {
       headers: { 'Authorization': 'Bearer ' + ScriptApp.getOAuthToken() }
     });
-    var pdfBlob = resp.getBlob().setName('order.pdf');
+    var pdfBlob = resp.getBlob();
 
     // 自動存到 Google Drive：組合單/年份/月份/
     try {
@@ -321,7 +321,8 @@ function generatePDF(d) {
       var yearDir  = getOrCreateFolder(root, year);
       var monthDir = getOrCreateFolder(yearDir, month);
       var fname    = '組合單-' + model + (customer ? '-' + customer : '') + '-' + dateStr + '.pdf';
-      monthDir.createFile(pdfBlob.copyBlob().setName(fname));
+      var backupBlob = pdfBlob.copyBlob().setName(fname);
+      monthDir.createFile(backupBlob);
     } catch(e) {
       Logger.log('Drive 存檔失敗: ' + e.message);
     }
