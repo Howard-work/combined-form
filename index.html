@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>組合單生成器</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#f0f0f0;padding-bottom:40px}
+#ui{max-width:640px;margin:0 auto;padding:16px}
+.t{font-size:17px;font-weight:700;margin-bottom:12px}
+.g{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px}
+@media(max-width:480px){.g{grid-template-columns:1fr}}
+.f{display:flex;flex-direction:column;gap:4px}
+.f label{font-size:11px;font-weight:700;color:#555}
+.f input,.f select{padding:9px 11px;border:1.5px solid #ddd;border-radius:8px;font-size:14px;font-family:inherit;background:#fff;outline:none;-webkit-appearance:none}
+.f input:focus,.f select:focus{border-color:#0071e3}
+.btn-gen{width:100%;margin-top:14px;padding:13px;border:none;border-radius:10px;background:#0071e3;color:#fff;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer}
+.btn-pdf{width:100%;margin-top:10px;padding:13px;border:none;border-radius:10px;background:#28a745;color:#fff;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;display:none}
+#msg{margin-top:10px;padding:10px 12px;border-radius:8px;font-size:13px;font-weight:600;display:none;text-align:center}
+.ok{background:#d4edda;color:#155724}
+.err{background:#f8d7da;color:#721c24}
+hr{border:none;border-top:1px solid #ddd;margin:14px 0}
+.hint{font-size:12px;color:#888;text-align:center}
+.notice{background:#fff8e1;border:1px solid #ffc107;border-radius:8px;padding:10px 12px;font-size:12px;color:#7a5c00;margin-bottom:12px;line-height:1.6}
+.footer{text-align:center;font-size:18px;color:#aaa;padding:20px 0 10px;letter-spacing:.5px}
+
+@media print{
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  @page{size:A4 portrait;margin:6mm}
+  @page:blank{display:none}
+  #ui,#btnPDF,#msg,hr,.hint{display:none!important}
+  body{background:#fff;margin:0;padding:0;height:297mm;overflow:hidden}
+  #sheet{display:block!important;width:100%!important;margin:0!important;padding:0!important;overflow:hidden;max-height:285mm}
+  table.form{width:100%!important;font-size:7.8pt;table-layout:fixed;border-collapse:collapse}
+  table.form td{padding:0 2px;line-height:1.1;overflow:hidden}
+  .sz24{font-size:12pt!important}.sz14{font-size:9pt!important}
+  .h44{height:39pt!important}.h33{height:27pt!important}
+  .h22{height:19pt!important}.h20{height:17.5pt!important}.h18{height:13pt!important}
+  .yel{background:#ffff00!important}.gray{background:#d9d9d9!important}
+}
+
+#sheet{display:none;max-width:794px;width:100%;margin:16px auto;background:#fff;padding:0}
+#sheet.show{display:block}
+table.form{width:100%;border-collapse:collapse;font-family:"新細明體","PMingLiU","Microsoft JhengHei",serif;font-size:11pt;table-layout:fixed}
+table.form td{padding:2px 5px;vertical-align:middle;word-break:break-all}
+.yel{background:#ffff00}.gray{background:#d9d9d9}
+.bt{border-top:1px solid #000}.btm{border-top:2.5px solid #000}
+.bb{border-bottom:1px solid #000}.bbm{border-bottom:2.5px solid #000}
+.bl{border-left:1px solid #000}.blm{border-left:2.5px solid #000}
+.br{border-right:1px solid #000}
+.bold{font-weight:bold}.c{text-align:center}.l{text-align:left}
+.h44{height:44px}.h33{height:33px}.h22{height:22px}.h20{height:20px}.h18{height:18px}
+.sz24{font-size:18pt}.sz14{font-size:13pt}
+</style>
+</head>
+<body>
+<div id="ui">
+  <div class="t">📋 拓昶貿易 組合單生成器</div>
+  <div class="notice">⚠️ 本功能僅限產出制式組合單。特殊規格請循一般流程開單，並請先行確認即時庫存。</div>
+  <div class="g">
+    <div class="f" style="grid-column:1/-1">
+      <label>機型（必填）</label>
+      <select id="model"><option value="">── 載入中 ──</option></select>
+    </div>
+    <div class="f"><label>客戶名稱</label><input type="text" id="customer" placeholder="輸入客戶名稱" autocomplete="off"></div>
+    <div class="f"><label>客戶品號（4位）</label><input type="text" id="partno" placeholder="不足自動補0" maxlength="4" inputmode="numeric"></div>
+    <div class="f"><label>碳帶型號</label><input type="text" id="ribbon" placeholder="例：AN510 或 DN421" autocomplete="off"></div>
+    <div class="f"><label>碳帶數量</label><input type="number" id="ribbon_qty" value="1" min="1" inputmode="numeric"></div>
+    <div class="f"><label>支架號碼（選填4位）</label><input type="text" id="bracket" placeholder="不填則跳過" maxlength="4" inputmode="numeric"></div>
+    <div class="f"><label>業務員</label>
+      <select id="sales"><option value="">── 請選擇 ──</option></select>
+    </div>
+    <div class="f"><label>工程師</label>
+      <select id="engineer"><option value="">── 請選擇 ──</option></select>
+    </div>
+    <div class="f" style="grid-column:1/-1"><label>訂單編號</label><input type="text" id="orderno" placeholder="訂單編號" autocomplete="off"></div>
+  </div>
+  <button class="btn-gen" id="btnGen">⚡ 生成組合單</button>
+  <button class="btn-pdf" id="btnPDF">⬇ 下載 PDF</button>
+  <div id="msg"></div>
+  <hr>
+  <div class="hint">手機電腦皆可 · 一鍵下載 PDF</div>
+</div>
+
+<div id="sheet">
+<table class="form">
+  <colgroup>
+    <col style="width:16px"><col style="width:16px">
+    <col style="width:365px"><col style="width:71px"><col style="width:63px">
+    <col style="width:55px"><col style="width:103px"><col style="width:85px">
+  </colgroup>
+  <tbody>
+  <tr class="h33"><td></td><td></td><td colspan="6" class="bold sz24 c">拓 昶 貿 易 股 份 有 限 公 司</td></tr>
+  <tr class="h44"><td></td><td></td><td colspan="6" class="bold sz24 c">（ 合 昌 金 箔 ）</td></tr>
+  <tr class="h33"><td></td><td></td><td colspan="6" class="bold sz24 c">組　　　　合　　　　單</td></tr>
+  <tr class="h20"><td></td><td></td>
+    <td class="bold l">客戶編號：</td>
+    <td class="bold l">銷貨日期：</td><td></td>
+    <td colspan="3" class="yel bold l" id="td-date"></td>
+  </tr>
+  <tr class="h20"><td></td><td></td>
+    <td class="yel bold l" id="td-cust">客戶名稱：</td>
+    <td colspan="5" class="bold l">銷貨編號：</td>
+  </tr>
+  <tr class="h18"><td colspan="8"></td></tr>
+  <tr class="h22"><td></td><td></td>
+    <td class="bold sz14 btm bbm blm br c">銷　　貨　　品　　名</td>
+    <td class="bold btm bbm bl br c">儲位</td>
+    <td class="bold btm bbm bl br c">數量</td>
+    <td class="bold btm bbm bl br c">單位</td>
+    <td colspan="2" class="bold btm bbm bl br c">備　　　　　　　　　注</td>
+  </tr>
+  <tr class="h20"><td></td><td></td>
+    <td class="yel bl br bb" id="r8c"></td>
+    <td class="yel bl br bb c" id="r8d"></td>
+    <td class="yel bl br bb c" id="r8e"></td>
+    <td class="bl br bb c">台</td><td colspan="2" class="bl br bb"></td>
+  </tr>
+  <tr class="h20"><td></td><td></td>
+    <td class="yel bl br bt bb" id="r9c"></td>
+    <td class="bl br bt bb c"></td><td class="bl br bt bb c"></td>
+    <td class="bl br bt bb c"></td><td colspan="2" class="bl br bt bb"></td>
+  </tr>
+  <tr class="h20"><td></td><td></td>
+    <td class="bl br bt bb"></td><td class="bl br bt bb c"></td><td class="bl br bt bb c"></td>
+    <td class="bl br bt bb c"></td><td colspan="2" class="bl br bt bb"></td>
+  </tr>
+  <tr class="h18"><td></td><td></td>
+    <td class="bl br bt"></td><td class="bl br bt c"></td><td class="bl br bt c"></td>
+    <td class="bl br bt c"></td><td colspan="2" class="bl br bt"></td>
+  </tr>
+  <tr class="h22"><td></td><td></td>
+    <td colspan="6" class="bold btm blm bbm br c gray">組　　　合　　　品　　　項</td>
+  </tr>
+  <tr class="h22"><td></td><td></td>
+    <td colspan="6" class="bold bt bbm blm br c gray">機　　　器　　　本　　　體</td>
+  </tr>
+  <tr class="h20"><td></td><td></td>
+    <td class="yel bt bb bl br l" id="r14c"></td>
+    <td class="yel bb bl br c" id="r14d"></td>
+    <td class="yel bb bl br c" id="r14e"></td>
+    <td class="bb bl br c">台</td><td colspan="2" class="bb bl br"></td>
+  </tr>
+  <tr class="h20"><td></td><td></td>
+    <td class="yel bt bb bl br l" id="r15c"></td>
+    <td class="bt bb bl br c"></td><td class="bt bb bl br c"></td>
+    <td class="bt bb bl br c"></td><td colspan="2" class="bt bb bl br"></td>
+  </tr>
+  <tr class="h20"><td></td><td></td>
+    <td class="bt bb bl br"></td><td class="bt bb bl br c"></td><td class="bt bb bl br c"></td>
+    <td class="bt bb bl br c"></td><td colspan="2" class="bt bb bl br"></td>
+  </tr>
+  <tr class="h20"><td></td><td></td>
+    <td class="bt bb bl br"></td><td class="bt bb bl br c"></td><td class="bt bb bl br c"></td>
+    <td class="bt bb bl br c"></td><td colspan="2" class="bt bb bl br"></td>
+  </tr>
+  <tr class="h20"><td></td><td></td>
+    <td class="bt bb bl br"></td><td class="bt bb bl br c"></td><td class="bt bb bl br c"></td>
+    <td class="bt bb bl br c"></td><td colspan="2" class="bt bb bl br"></td>
+  </tr>
+  <tr class="h18"><td></td><td></td>
+    <td class="bt bl br"></td><td class="bt bl br c"></td><td class="bt bl br c"></td>
+    <td class="bt bl br c"></td><td colspan="2" class="bt bl br"></td>
+  </tr>
+  <tr class="h22"><td></td><td></td>
+    <td colspan="6" class="bold btm bbm blm br c gray">機　　　器　　　配　　　件</td>
+  </tr>
+  <tr class="h20"><td></td><td></td>
+    <td class="yel bt bb bl br l" id="r21c"></td>
+    <td class="yel bb bl br c" id="r21d"></td>
+    <td class="yel bb bl br c" id="r21e"></td>
+    <td class="bb bl br c">組</td><td colspan="2" class="bb bl br"></td>
+  </tr>
+  <tr class="h20"><td></td><td></td>
+    <td class="yel bt bb bl br l" id="r22c"></td>
+    <td class="bt bb bl br c"></td><td class="bt bb bl br c"></td>
+    <td class="bt bb bl br c"></td><td colspan="2" class="bt bb bl br"></td>
+  </tr>
+  <tr class="h20"><td></td><td></td>
+    <td class="bt bb bl br"></td><td class="bt bb bl br c"></td><td class="bt bb bl br c"></td>
+    <td class="bt bb bl br c"></td><td colspan="2" class="bt bb bl br"></td>
+  </tr>
+  <tr class="h20"><td></td><td></td>
+    <td class="yel bt bb bl br l" id="r24c"></td>
+    <td class="yel bt bb bl br c" id="r24d"></td>
+    <td class="yel bt bb bl br c" id="r24e"></td>
+    <td class="bt bb bl br c">組</td><td colspan="2" class="bt bb bl br"></td>
+  </tr>
+  <tr class="h20"><td></td><td></td>
+    <td class="yel bt bb bl br l" id="r25c"></td>
+    <td class="bt bb bl br c"></td><td class="bt bb bl br c"></td>
+    <td class="bt bb bl br c"></td><td colspan="2" class="bt bb bl br"></td>
+  </tr>
+  <tr class="h18"><td></td><td></td>
+    <td class="bb bl br"></td><td class="bb bl br c"></td><td class="bb bl br c"></td>
+    <td class="bb bl br c"></td><td colspan="2" class="bt bb bl br"></td>
+  </tr>
+  <tr class="h20"><td></td><td></td>
+    <td class="yel bt bb bl br l" id="r27c"></td>
+    <td class="yel bt bb bl br c" id="r27d"></td>
+    <td class="yel bt bb bl br c" id="r27e"></td>
+    <td class="bt bb bl br c">組</td><td colspan="2" class="bt bb bl br"></td>
+  </tr>
+  <tr class="h20"><td></td><td></td>
+    <td class="yel bt bb bl br l" id="r28c"></td>
+    <td class="bt bb bl br c"></td><td class="bt bb bl br c"></td>
+    <td class="bt bb bl br c"></td><td colspan="2" class="bt bb bl br"></td>
+  </tr>
+  <tr class="h18"><td></td><td></td>
+    <td class="bb bl br"></td><td class="bb bl br c"></td><td class="bb bl br c"></td>
+    <td class="bb bl br c"></td><td colspan="2" class="bb bl br"></td>
+  </tr>
+  <tr class="h20"><td></td><td></td>
+    <td class="bt bb bl br"></td><td class="bt bb bl br c"></td><td class="bt bb bl br c"></td>
+    <td class="bt bb bl br c"></td><td colspan="2" class="bt bb bl br"></td>
+  </tr>
+  <tr class="h22"><td></td><td></td>
+    <td colspan="6" class="bold btm bbm blm br c gray">搭　　　　　　　　　　　　贈</td>
+  </tr>
+  <tr class="h20"><td></td><td></td>
+    <td class="yel bb bl br l" id="r32c"></td>
+    <td class="yel bb bl br c" id="r32d"></td>
+    <td class="yel bb bl br c" id="r32e"></td>
+    <td class="bb bl br c">組</td><td colspan="2" class="bb bl br"></td>
+  </tr>
+  <tr class="h20"><td></td><td></td>
+    <td class="yel bt bb bl br l" id="r33c"></td>
+    <td class="bt bb bl br c"></td><td class="bt bb bl br c"></td>
+    <td class="bt bb bl br c"></td><td colspan="2" class="bt bb bl br"></td>
+  </tr>
+  <tr class="h20"><td></td><td></td>
+    <td class="bt bb bl br"></td><td class="bt bb bl br c"></td><td class="bt bb bl br c"></td>
+    <td class="bt bb bl br c"></td><td colspan="2" class="bt bb bl br"></td>
+  </tr>
+  <tr class="h20"><td></td><td></td>
+    <td class="yel bt bb bl br l" id="r35c"></td>
+    <td class="yel bb bl br c" id="r35d"></td>
+    <td class="yel bb bl br c" id="r35e"></td>
+    <td class="bb bl br c">捲</td><td colspan="2" class="bb bl br"></td>
+  </tr>
+  <tr class="h20"><td></td><td></td>
+    <td class="yel bt bb bl br l" id="r36c"></td>
+    <td class="bt bb bl br c"></td><td class="bt bb bl br c"></td>
+    <td class="bt bb bl br c"></td><td colspan="2" class="bt bb bl br"></td>
+  </tr>
+  <tr class="h22"><td></td><td></td>
+    <td colspan="6" class="bold btm bbm blm br c gray">支　　　　　　　　　　　　架</td>
+  </tr>
+  <tr class="h20"><td></td><td></td>
+    <td class="yel bb bl br l" id="r38c"></td>
+    <td class="yel bb bl br c" id="r38d"></td>
+    <td class="yel bb bl br c" id="r38e"></td>
+    <td class="bb bl br c">套</td><td colspan="2" class="bb bl br"></td>
+  </tr>
+  <tr class="h20"><td></td><td></td>
+    <td class="yel bt bb bl br l" id="r39c"></td>
+    <td class="bt bb bl br c"></td><td class="bt bb bl br c"></td>
+    <td class="bt bb bl br c"></td><td colspan="2" class="bt bb bl br"></td>
+  </tr>
+  <tr class="h20"><td></td><td></td>
+    <td class="bt bb bl br"></td><td class="bt bb bl br c"></td><td class="bt bb bl br c"></td>
+    <td class="bt bb bl br c"></td><td colspan="2" class="bt bb bl br"></td>
+  </tr>
+  <tr class="h20"><td></td><td></td>
+    <td>業 務 主 管 ：</td><td></td>
+    <td colspan="4" class="yel" id="r41e">業   務   員 ：</td>
+  </tr>
+  <tr class="h18"><td colspan="8"></td></tr>
+  <tr class="h20"><td></td><td></td>
+    <td>技 術 主 管 ：</td><td></td>
+    <td colspan="4" class="yel" id="r43e">技 術 人 員 ：</td>
+  </tr>
+  <tr class="h18"><td colspan="8"></td></tr>
+  <tr class="h20"><td></td><td></td>
+    <td class="yel" id="r45c">訂單編號：</td><td></td>
+    <td colspan="4">倉　管　：</td>
+  </tr>
+  </tbody>
+</table>
+</div>
+
+<script>
+var MM = {"6330 1inch LH": ["TTO 32MM VJ6330 LEFT HAND", "QQTTO32VJ6330LH00000"], "6330 1inch RH": ["TTO 32MM VJ6330 RIGHT HAND", "QQTTO32VJ6330RH00000"], "6330 2inch LH": ["TTO 53MM VJ6330 LEFT HAND", "QQTTO53VJ6330LH00000"], "6330 2inch RH": ["TTO 53MM VJ6330 RIGHT HAND", "QQTTO53VJ6330RH00000"], "6530 LH": ["TTO 53MM VJ6530 LEFT HAND", "QQTTO53VJ6530LH00000"], "6530 RH": ["TTO 53MM VJ6530 RIGHT HAND", "QQTTO53VJ6530RH00000"], "MP2": ["OPS-MP 2吋 手動機", "QQAOPSMP200000000000"], "MP3": ["OPS-MP 3吋 手動機", "QQAOPSMP300000000000"], "MP4": ["OPS-MP 4吋 手動機", "QQAOPSMP400000000000"], "610AP2": ["OPS-MP 2吋 手動機", "QQAOPSMP200000000000"], "610AP3": ["OPS-MP 3吋 手動機", "QQAOPSMP300000000000"], "610AP4": ["OPS-MP4 吋 手動機", "QQAOPSMP400000000000"]};
+
+var MM = {};
+var INV = [];
+
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwOsXVarWdGUyyFrsnPIktpjlh1NUgvBJkHSQq06POftnhvNDOcj71B0oUTWr4MXr8o/exec';
+
+async function loadAppSettings() {
+  try {
+    var r = await fetch(GAS_URL + '?action=getSettings');
+    var j = await r.json();
+
+    // 更新 MM
+    MM = {};
+    Object.keys(j.MM || {}).forEach(function(k) {
+      var m = j.MM[k];
+      MM[k] = [m.c14, m.c15, m.c21||'', m.c22||'', m.c24||'', m.c25||'', m.c27||'', m.c28||'', m.ribbonSz||''];
+    });
+
+    // 更新機型下拉
+    var modelSel = el('model');
+    modelSel.innerHTML = '<option value="">── 請選擇機型 ──</option>';
+    Object.keys(MM).forEach(function(k) {
+      var opt = document.createElement('option');
+      opt.value = k; opt.textContent = k;
+      modelSel.appendChild(opt);
+    });
+
+    // 更新業務員下拉
+    var salesSel = el('sales');
+    salesSel.innerHTML = '<option value="">── 請選擇 ──</option>';
+    (j.sales || []).forEach(function(n) {
+      var opt = document.createElement('option');
+      opt.value = n; opt.textContent = n;
+      salesSel.appendChild(opt);
+    });
+
+    // 更新工程師下拉
+    var engSel = el('engineer');
+    engSel.innerHTML = '<option value="">── 請選擇 ──</option>';
+    (j.engineers || []).forEach(function(n) {
+      var opt = document.createElement('option');
+      opt.value = n; opt.textContent = n;
+      engSel.appendChild(opt);
+    });
+
+    // 更新 INV
+    INV = j.INV || [];
+
+  } catch(err) {
+    console.error('載入設定失敗:', err);
+    showMsg('⚠️ 設定載入失敗，請重新整理', 'err');
+  }
+}
+
+
+
+var t = new Date();
+var dateStr = t.getFullYear() + '.' + String(t.getMonth()+1).padStart(2,'0') + '.' + String(t.getDate()).padStart(2,'0');
+
+function el(id){ return document.getElementById(id); }
+function set(id, v){ var e = el(id); if(e && v) e.textContent = v; }
+function clr(id){ var e = el(id); if(e) e.textContent = ''; }
+function showMsg(txt, cls){ var e = el('msg'); e.textContent = txt; e.className = cls; e.style.display = txt ? 'block' : 'none'; }
+
+el('partno').addEventListener('blur', function(){ if(this.value) this.value = this.value.replace(/[^0-9]/g,'').padStart(4,'0'); });
+el('bracket').addEventListener('blur', function(){ if(this.value) this.value = this.value.replace(/[^0-9]/g,'').padStart(4,'0'); });
+
+el('btnGen').addEventListener('click', function(){
+  var model    = el('model').value.trim();
+  var customer = el('customer').value.trim();
+  var partno   = (el('partno').value.trim() || '0000').padStart(4,'0');
+  var ribbon   = el('ribbon').value.trim();
+  var ribbon_qty = parseInt(el('ribbon_qty').value) || 1;
+  var bracket  = el('bracket').value.trim();
+  var sales    = el('sales').value.trim();
+  var engineer = el('engineer').value.trim();
+  var orderno  = el('orderno').value.trim();
+
+  if(!model){ showMsg('請先選擇機型','err'); return; }
+
+  // 清空
+  ['r8c','r8d','r8e','r9c','r14c','r14d','r14e','r15c',
+   'r21c','r21d','r21e','r22c','r24c','r24d','r24e','r25c',
+   'r27c','r27d','r27e','r28c','r32c','r32d','r32e','r33c',
+   'r35c','r35d','r35e','r36c','r38c','r38d','r38e','r39c'
+  ].forEach(clr);
+  el('r41e').textContent = '業   務   員 ：';
+  el('r43e').textContent = '技 術 人 員 ：';
+  el('r45c').textContent = '訂單編號：';
+
+  set('td-date', dateStr);
+  set('td-cust', '客戶名稱：' + customer);
+
+  var m = MM[model];
+  if(m){
+    var c14=m[0],c15=m[1],c21=m[2],c22=m[3],c24=m[4],c25=m[5],c27=m[6],c28=m[7],ribbonSz=m[8]||'';
+    set('r8c',  c14 + (customer ? ' (' + customer + ')' : ''));
+    set('r8d',  'TQ');
+    set('r8e',  '1');
+    set('r9c',  c15.substring(0,16) + partno);
+    set('r14c', c14);
+    set('r14d', 'TA');
+    set('r14e', '1');
+    set('r15c', c15);
+  }
+
+  // 配件從設定讀取
+  if(c21){ set('r21c',c21); set('r21d','TA'); set('r21e','1'); }
+  if(c22){ set('r22c',c22); }
+  if(c24){ set('r24c',c24); set('r24d','TA'); set('r24e','1'); }
+  if(c25){ set('r25c',c25); }
+  if(c27){ set('r27c',c27); set('r27d','TA'); set('r27e','1'); }
+  if(c28){ set('r28c',c28); }
+
+  set('r32c','酒精筆'); set('r32d','TA'); set('r32e','1');
+  set('r33c','QQTHERMALHEADCLEANER');
+
+  if(ribbon){
+    var rc = ribbon.toUpperCase().replace(/[-_ ]/g,'');
+    var sz = ribbonSz || '';
+    if(sz){
+      // 碳帶顏色：有打白就找白，否則預設黑
+      var isWhite = /白|white/i.test(ribbon);
+      var colorKey = isWhite ? '白' : '黑';
+      var hit = INV.find(function(i){
+        return i['品名'].toUpperCase().replace(/[-_ (R)+\s]/g,'').indexOf(rc) >= 0
+            && i['品名'].indexOf(sz) >= 0
+            && i['品名'].indexOf(colorKey) >= 0;
+      });
+      // 若找不到，放寬顏色條件再找一次
+      if(!hit){
+        hit = INV.find(function(i){
+          return i['品名'].toUpperCase().replace(/[-_ (R)+\s]/g,'').indexOf(rc) >= 0
+              && i['品名'].indexOf(sz) >= 0;
+        });
+      }
+      if(hit){ set('r35c',hit['品名']); set('r35d','TA'); set('r35e',String(ribbon_qty)); set('r36c',hit['料號']); }
+      else    { set('r35c','未找到: ' + ribbon + ' x ' + sz); }
+    }
+  }
+
+  if(bracket){
+    var bp = bracket.padStart(4,'0');
+    set('r38c','支架' + bp + (customer ? ' (' + customer + ')' : ''));
+    set('r38d','TQ'); set('r38e','1');
+    set('r39c',('QQTTT00000000000' + bp).substring(0,20));
+  }
+
+  if(sales)    el('r41e').textContent = '業   務   員 ：' + sales;
+  if(engineer) el('r43e').textContent = '技 術 人 員 ：' + engineer;
+  if(orderno)  el('r45c').textContent = '訂單編號：' + orderno;
+
+  document.title = '組合單-' + model + (customer ? '-' + customer : '');
+  el('sheet').className = 'show';
+  el('btnPDF').style.display = 'block';
+  showMsg('已生成！請按「🖨 儲存 PDF」','ok');
+  el('btnPDF').scrollIntoView({behavior:'smooth', block:'nearest'});
+});
+
+el('btnPDF').addEventListener('click', async function(){
+  var btn = this;
+  btn.disabled = true;
+  btn.textContent = '⏳ 產生中，請稍候…';
+  showMsg('正在產生 PDF，首次約需30秒…','ok');
+
+  var model    = el('model').value.trim();
+  var customer = el('customer').value.trim();
+  var partno   = (el('partno').value.trim() || '0000').padStart(4,'0');
+  var ribbon   = el('ribbon').value.trim();
+  var ribbon_qty = parseInt(el('ribbon_qty').value) || 1;
+  var bracket  = el('bracket').value.trim();
+  var sales    = el('sales').value.trim();
+  var engineer = el('engineer').value.trim();
+  var orderno  = el('orderno').value.trim();
+
+  var t = new Date();
+  var dateStr = t.getFullYear() + '.' + String(t.getMonth()+1).padStart(2,'0') + '.' + String(t.getDate()).padStart(2,'0');
+
+  try {
+    var fname = '組合單-' + model + (customer ? '-' + customer : '') + '-' + dateStr + '.pdf';
+    var resp = await fetch('https://script.google.com/macros/s/AKfycbwOsXVarWdGUyyFrsnPIktpjlh1NUgvBJkHSQq06POftnhvNDOcj71B0oUTWr4MXr8o/exec', {
+      method: 'POST',
+
+      body: JSON.stringify({
+        model: model, customer: customer, partno: partno,
+        date: dateStr, ribbon: ribbon, bracket: bracket,
+        sales: sales, engineer: engineer, orderno: orderno, ribbon_qty: ribbon_qty
+      })
+    });
+    if(!resp.ok) throw new Error('伺服器錯誤 ' + resp.status);
+    var result = await resp.json();
+    if(result.error) throw new Error(result.error);
+    // 把 base64 PDF 轉成下載
+    var binary = atob(result.pdf);
+    var bytes = new Uint8Array(binary.length);
+    for(var i=0; i<binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    var blob = new Blob([bytes], {type: 'application/pdf'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = fname; a.click();
+    URL.revokeObjectURL(url);
+    showMsg('✅ PDF 已下載：' + fname, 'ok');
+  } catch(e) {
+    showMsg('❌ 錯誤：' + e.message, 'err');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '⬇ 下載 PDF';
+  }
+});
+
+loadAppSettings();
+
+function goAdmin(){
+  var pw = prompt('請輸入管理員密碼：');
+  if(pw === '198310'){
+    sessionStorage.setItem('admin_pw', pw);
+    window.location.href = 'admin.html';
+  } else if(pw !== null){
+    alert('密碼錯誤');
+  }
+}
+</script>
+  <div style="text-align:center;padding:10px 0 4px">
+  <button onclick="goAdmin()" style="background:none;border:1px solid #ccc;border-radius:8px;padding:6px 16px;font-size:12px;color:#999;cursor:pointer;font-family:inherit">⚙️ 管理後台</button>
+</div>
+<div class="footer">Designed by Howard | 2026 rev.1</div>
+</body>
+</html>
